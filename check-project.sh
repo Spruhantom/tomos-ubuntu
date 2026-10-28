@@ -11,6 +11,9 @@ from pathlib import Path
 root = Path(sys.argv[1])
 required = [
     "assets/render_wallpaper.py",
+    "assets/render_plymouth.py",
+    "config/plymouth/tomos.plymouth",
+    "config/plymouth/tomos.script",
     "config/calamares/settings.conf",
     "config/calamares/modules/unpackfs.conf",
     "config/calamares/branding/punk/branding.desc",
@@ -73,8 +76,15 @@ except json.JSONDecodeError as exc:
     raise SystemExit(f"Invalid Caelestia config at line {exc.lineno}, column {exc.colno}: {exc.msg}")
 print("Waybar, Fastfetch and Caelestia JSON syntax OK")
 PYTEST
-python3 -m py_compile "$ROOT/assets/render_wallpaper.py"
-echo "Python syntax OK: assets/render_wallpaper.py"
+python3 -m py_compile "$ROOT/assets/render_wallpaper.py" "$ROOT/assets/render_plymouth.py"
+echo "Python syntax OK: wallpaper and Plymouth renderers"
+if ! grep -q 'plymouth-theme-script' "$ROOT/packages.txt"; then
+    echo "Missing plymouth-theme-script package" >&2; exit 1
+fi
+if ! grep -q 'Plymouth.SetBootProgressFunction' "$ROOT/config/plymouth/tomos.script"; then
+    echo "Plymouth theme does not update the progress bar from boot progress" >&2; exit 1
+fi
+echo "Plymouth theme assets and progress callback OK"
 if [[ -f "$ROOT/assets/neon-punk.png" ]]; then
     file "$ROOT/assets/neon-punk.png"
 else
