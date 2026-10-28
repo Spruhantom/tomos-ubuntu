@@ -24,6 +24,16 @@ fi
 . /etc/os-release
 case "${ID:-}" in
     ubuntu|debian|linuxmint|pop)
+        if ! command -v apt-get >/dev/null 2>&1; then
+            echo "This host identifies as ${ID:-unknown}, but apt-get is unavailable." >&2
+            exit 1
+        fi
+        if [[ "${ID:-}" == debian ]]; then
+            case "${VERSION_ID:-}" in
+                12|13) echo "Detected Debian ${VERSION_ID}; installing build dependencies with APT." ;;
+                *) echo "Debian ${VERSION_ID:-unknown} detected. Debian 12 and 13 are the tested targets; continuing best-effort." >&2 ;;
+            esac
+        fi
         export DEBIAN_FRONTEND=noninteractive
         apt-get update
         apt-get install -y --no-install-recommends ca-certificates curl tar xz-utils coreutils findutils gawk grep podman
@@ -45,7 +55,7 @@ case "${ID:-}" in
         done
         ;;
     *)
-        echo "Unsupported host OS: ${PRETTY_NAME:-unknown}. Use Fedora, Ubuntu/Debian, or an Arch-based Linux system." >&2
+        echo "Unsupported host OS: ${PRETTY_NAME:-unknown}. Use Fedora, Debian 12/13, Ubuntu, or an Arch-based Linux system." >&2
         exit 1
         ;;
 esac
