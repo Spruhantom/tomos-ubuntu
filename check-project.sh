@@ -20,6 +20,8 @@ required = [
     "config/hypr/hyprland.conf",
     "config/hypr/hypridle.conf",
     "config/hypr/hyprpaper.conf",
+    "config/waybar/dock.jsonc",
+    "config/waybar/dock.css",
     "config/hypr/README.md",
     "scripts/install-caelestia.sh",
     "config/punksway-quickstart.desktop",
@@ -40,7 +42,12 @@ try:
     json.loads(waybar_config.read_text())
 except json.JSONDecodeError as exc:
     raise SystemExit(f"Invalid Waybar config at line {exc.lineno}, column {exc.colno}: {exc.msg}")
-print("Waybar config syntax OK")
+dock_config = root / "config/waybar/dock.jsonc"
+try:
+    json.loads(dock_config.read_text())
+except json.JSONDecodeError as exc:
+    raise SystemExit(f"Invalid Waybar dock config at line {exc.lineno}, column {exc.colno}: {exc.msg}")
+print("Waybar top-panel and dock JSON syntax OK")
 PYTEST
 python3 -m py_compile "$ROOT/assets/render_wallpaper.py"
 echo "Python syntax OK: assets/render_wallpaper.py"
