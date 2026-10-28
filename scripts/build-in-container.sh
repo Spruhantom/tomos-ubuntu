@@ -115,6 +115,8 @@ copy_user_config() {
     install -D -m 0644 "$PROJECT/config/hypr/hyprland.conf" "$destination/.config/hypr/hyprland.conf"
     install -D -m 0644 "$PROJECT/config/hypr/hypridle.conf" "$destination/.config/hypr/hypridle.conf"
     install -D -m 0644 "$PROJECT/config/hypr/hyprpaper.conf" "$destination/.config/hypr/hyprpaper.conf"
+    install -D -m 0644 "$PROJECT/config/waybar/config.jsonc" "$destination/.config/waybar/config.jsonc"
+    install -D -m 0644 "$PROJECT/config/waybar/style.css" "$destination/.config/waybar/style.css"
     install -D -m 0644 "$PROJECT/config/wofi/style.css" "$destination/.config/wofi/style.css"
     install -D -m 0644 "$PROJECT/config/foot/foot.ini" "$destination/.config/foot/foot.ini"
     install -D -m 0644 "$PROJECT/config/mako/config" "$destination/.config/mako/config"
