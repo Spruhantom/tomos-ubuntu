@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Install PunkSway
+Comment=Install PunkSway to this computer
+Exec=pkexec calamares
+Icon=calamares
+Terminal=false
+Categories=System;
+Keywords=install;system;calamares;
