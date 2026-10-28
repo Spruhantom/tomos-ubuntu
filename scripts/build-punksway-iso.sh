@@ -13,6 +13,10 @@ if [[ "${EUID}" -ne 0 ]]; then
     exit 1
 fi
 
+if [[ "$(uname -m)" != x86_64 ]]; then
+    echo "PunkSway currently builds amd64 images only; host architecture must be x86_64." >&2
+    exit 1
+fi
 if [[ ! -r /etc/os-release ]]; then
     echo "Cannot identify host OS: /etc/os-release is missing." >&2
     exit 1
@@ -25,47 +29,76 @@ case "${ID:-}" in
         apt-get install -y --no-install-recommends ca-certificates curl tar xz-utils coreutils podman
         ;;
     arch|endeavouros|omarchy|manjaro)
-        pacman -Sy --needed --noconfirm ca-certificates curl tar xz coreutils podman
+        # Avoid a partial Arch upgrade (-Sy). Require Podman to already be installed.
+        if ! command -v podman >/dev/null 2>&1; then
+            echo "Podman is required on Arch-based hosts. Install it with 'sudo pacman -Syu podman', then rerun this command." >&2
+            exit 1
+        fi
+        for tool in curl tar sha256sum df awk; do
+            command -v "$tool" >/dev/null 2>&1 || {
+                echo "Missing required tool '$tool'. Install it using your distribution's package manager." >&2
+                exit 1
+            }
+        done
         ;;
     *)
-        echo "Unsupported host OS: ${PRETTY_NAME:-unknown}. Use Ubuntu/Debian or Arch-based Linux." >&2
+        echo "Unsupported host OS: ${PRETTY_NAME:-unknown}. Use Ubuntu/Debian or an Arch-based Linux system." >&2
         exit 1
         ;;
 esac
-
-if [[ "$(uname -m)" != x86_64 ]]; then
-    echo "PunkSway currently builds amd64 images only; host architecture must be x86_64." >&2
-    exit 1
-fi
-command -v podman >/dev/null || { echo "Podman could not be installed." >&2; exit 1; }
+command -v podman >/dev/null 2>&1 || { echo "Podman could not be installed." >&2; exit 1; }
 
 mkdir -p "$WORK"
-WORK="$(cd "$WORK" && pwd)"
+WORK="$(cd "$WORK" && pwd -P)"
+if [[ "$WORK" == "/" || -z "$WORK" ]]; then
+    echo "Unsafe work directory: $WORK" >&2
+    exit 1
+fi
+available_kb="$(df -Pk "$WORK" | awk 'NR == 2 {print $4}')"
+if [[ ! "$available_kb" =~ ^[0-9]+$ ]] || (( available_kb < 31457280 )); then
+    echo "At least 30 GiB of free space is recommended on the filesystem containing $WORK." >&2
+    exit 1
+fi
+
 echo "PunkSway full-project ISO build"
 echo "Work directory: $WORK"
-echo "This downloads a multi-gigabyte Ubuntu ISO and needs approximately 25–35 GB of free disk space."
+echo "Free space: $((available_kb / 1024 / 1024)) GiB"
+echo "This downloads a multi-gigabyte Ubuntu ISO and can take a while."
 
 echo "[1/4] Downloading the project source..."
 curl --fail --location --retry 3 --silent --show-error "$REPO_ARCHIVE" -o "$WORK/project.tar.gz"
+# Clear any old checkout first so removed/renamed files cannot survive from a previous run.
+rm -rf "$WORK/project"
 mkdir -p "$WORK/project"
 tar -xzf "$WORK/project.tar.gz" --strip-components=1 -C "$WORK/project"
+[[ -x "$WORK/project/build.sh" && -f "$WORK/project/scripts/build-in-container.sh" ]] || {
+    echo "Downloaded project archive is missing the expected build scripts." >&2
+    exit 1
+}
 
 echo "[2/4] Downloading the official Ubuntu 26.10 Desktop amd64 ISO and checksums..."
 curl --fail --location --retry 3 --silent --show-error "$UBUNTU_BASE/SHA256SUMS" -o "$WORK/SHA256SUMS"
 curl --fail --location --retry 3 --silent --show-error "$UBUNTU_BASE/$ISO_NAME" -o "$WORK/$ISO_NAME"
-(
-    cd "$WORK"
-    grep -F "  $ISO_NAME" SHA256SUMS | sha256sum --check -
-)
+checksum_line="$(awk -v name="$ISO_NAME" '$2 == name { print; count++ } END { if (count != 1) exit 1 }' "$WORK/SHA256SUMS")" || {
+    echo "Could not find exactly one checksum entry for $ISO_NAME in the official SHA256SUMS file." >&2
+    exit 1
+}
+printf '%s\n' "$checksum_line" | (cd "$WORK" && sha256sum --check -)
 
 echo "[3/4] Building the complete PunkSway ISO inside Ubuntu 26.10..."
 chmod -R u+rwX "$WORK/project"
 KEEP_BUILD="${KEEP_BUILD:-0}" BUILD_JOBS="${BUILD_JOBS:-0}" \
     bash "$WORK/project/build.sh" "$WORK/$ISO_NAME"
 
+OUTPUT="$WORK/project/dist/PunkSway-26.10-amd64.iso"
+[[ -s "$OUTPUT" && -s "$OUTPUT.sha256" ]] || {
+    echo "Build command returned, but the expected ISO or checksum file is missing/empty." >&2
+    exit 1
+}
+
 echo "[4/4] Build finished."
-echo "ISO:      $WORK/project/dist/PunkSway-26.10-amd64.iso"
-echo "Checksum: $WORK/project/dist/PunkSway-26.10-amd64.iso.sha256"
+echo "ISO:      $OUTPUT"
+echo "Checksum: $OUTPUT.sha256"
 echo
 echo "This creates a bootable ISO; it does not install or replace the OS on this computer."
 echo "Test the ISO in a virtual machine before installing it on hardware."
