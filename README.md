@@ -9,7 +9,7 @@
 - Experimental Hyprland session configuration plus the original Sway session as a fallback.
 - Caelestia Shell integration notes and an optional source checkout helper. Caelestia itself is not automatically built into the ISO because its Quickshell/Qt dependency versions need validation on Ubuntu 26.04.
 - Custom neon-blue wallpaper, cyan focus borders, violet accents and matching Waybar, Wofi, Foot and Mako styles.
-- LightDM with the existing Sway session configuration retained; choose Hyprland at the greeter when installed.
+- Ly TTY display/login manager; choose the Hyprland session at login. Sway remains installed as a fallback.
 - A custom-branded Calamares installer configuration and launch icon, plus partitioning tools. The installer configuration is experimental until tested in a VM on both UEFI and BIOS systems.
 - NetworkManager tray applet, PipeWire tools, screenshots, clipboard tools, idle locking and a quick-start guide.
 - Build scripts to customise the live filesystem and preserve the source ISO's boot setup.
