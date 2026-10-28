@@ -1,0 +1,13 @@
+[Unit]
+Description=Enable the temporary live-user autologin for PunkSway
+After=local-fs.target
+Before=lightdm.service display-manager.service
+ConditionPathExists=/proc/cmdline
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/punksway-live-login
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical.target
