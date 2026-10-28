@@ -51,4 +51,6 @@ BUILDING
 On Omarchy Linux install Podman with pacman, then run:
   ./build.sh /path/to/ubuntu-26.10-desktop-amd64.iso
 
+A Tom OS neon purple/cyan Plymouth splash and progress bar are configured for boot. The progress bar follows Plymouth's boot progress callbacks; verify it in a VM.
+
 The base image should be the official Ubuntu 26.10 Desktop amd64 ISO. The build installs `linux-generic` and checks for a Linux 7.3 generic kernel image before repacking.
