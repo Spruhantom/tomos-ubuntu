@@ -1,7 +1,7 @@
 PUNKSWAY — QUICKSTART
 =====================
 
-PunkSway is an Ubuntu-based live desktop project targeting Hyprland with Caelestia Shell. Sway is retained as a fallback session while the new setup is experimental.
+PunkHyprland is an Ubuntu-based live desktop project targeting Hyprland with Caelestia Shell. Hyprland is the only supported window manager session.
 The default look is midnight blue, cyan neon and electric violet.
 
 KEYBOARD SHORTCUTS
@@ -34,7 +34,7 @@ open the NetworkManager connection editor; the volume module opens pavucontrol.
 
 LIVE SESSION VS INSTALLED SYSTEM
 --------------------------------
-Ly is the configured display/login manager and presents a TTY-based session selector. Choose Hyprland for the intended desktop or Sway as a fallback. Automatic live-session login has been disabled because the previous LightDM-specific autologin hook does not apply to Ly. User defaults are copied from
+Ly is the configured display/login manager and presents a TTY-based session selector. Choose the Hyprland session. Automatic live-session login has been disabled because the previous LightDM-specific autologin hook does not apply to Ly. User defaults are copied from
 /etc/skel during account creation.
 
 INSTALLING
