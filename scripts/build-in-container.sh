@@ -117,6 +117,7 @@ install -D -m 0644 "$PROJECT/config/lightdm/lightdm-gtk-greeter.conf" "$ROOT/etc
 copy_user_config() {
     local destination="$1"
     install -D -m 0644 "$PROJECT/config/sway/config" "$destination/.config/sway/config"
+    install -D -m 0644 "$PROJECT/config/hypr/hyprland.conf" "$destination/.config/hypr/hyprland.conf"
     install -D -m 0644 "$PROJECT/config/waybar/config.jsonc" "$destination/.config/waybar/config.jsonc"
     install -D -m 0644 "$PROJECT/config/waybar/style.css" "$destination/.config/waybar/style.css"
     install -D -m 0644 "$PROJECT/config/wofi/style.css" "$destination/.config/wofi/style.css"
