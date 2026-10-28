@@ -130,7 +130,7 @@ install -D -m 0644 "$PROJECT/QUICKSTART.txt" "$ROOT/usr/share/doc/punksway/QUICK
 if [[ -f "$ROOT/usr/lib/os-release" ]]; then
     sed -i 's/^NAME=.*/NAME="PunkSway"/; s/^PRETTY_NAME=.*/PRETTY_NAME="PunkSway 26.04 LTS (Ubuntu base)"/' "$ROOT/usr/lib/os-release"
 fi
-if [[ -f "$ROOT/etc/lsb-release" ]]; then sed -i 's/^DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION="PunkSway 26.04 LTS — Blue Neon Sway"/' "$ROOT/etc/lsb-release"; fi
+if [[ -f "$ROOT/etc/lsb-release" ]]; then sed -i 's/^DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION="PunkSway 26.04 LTS — Blue Neon Hyprland"/' "$ROOT/etc/lsb-release"; fi
 cat > "$ROOT/etc/issue" <<'ISSUE'
 \n\l
 PunkSway 26.04 LTS — Blue Neon Sway
