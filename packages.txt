@@ -1,0 +1,41 @@
+# Core desktop
+sway
+waybar
+wofi
+foot
+swaybg
+swaylock
+swayidle
+mako-notifier
+
+# Wayland tools
+xwayland
+grim
+slurp
+wl-clipboard
+brightnessctl
+playerctl
+
+# Audio, portals, file/network tools
+pipewire-pulse
+pipewire-bin
+wireplumber
+pavucontrol
+xdg-desktop-portal
+xdg-desktop-portal-wlr
+xdg-desktop-portal-gtk
+network-manager
+network-manager-gnome
+thunar
+
+# Policy agent and display manager
+polkitd
+mate-polkit
+lightdm
+lightdm-gtk-greeter
+
+# Theme and fonts
+fonts-jetbrains-mono
+fonts-noto-color-emoji
+papirus-icon-theme
+librsvg2-common
