@@ -126,7 +126,8 @@ ShowDelay=0
 DeviceTimeout=8
 PLYMOUTH
 # Regenerate initramfs so the selected theme is included in the boot image.
-chroot "$ROOT" plymouth-set-default-theme tomos
+chroot "$ROOT" update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/tomos/tomos.plymouth 100
+chroot "$ROOT" update-alternatives --set default.plymouth /usr/share/plymouth/themes/tomos/tomos.plymouth
 chroot "$ROOT" update-initramfs -u -k all
 install -D -m 0644 "$PROJECT/config/fastfetch/fastfetch-logo.txt" "$ROOT/usr/share/punksway/fastfetch-logo.txt"
 install -D -m 0755 "$PROJECT/scripts/punksway-polkit-agent.sh" "$ROOT/usr/local/bin/punksway-polkit-agent"
