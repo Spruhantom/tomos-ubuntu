@@ -150,7 +150,7 @@ cleanup_mounts; restore_chroot_files; RESOLV_KIND=missing; POLICY_WAS_PRESENT=0;
 for cfg in "$TREE/boot/grub/grub.cfg" "$TREE/boot/grub/loopback.cfg"; do
     if [[ -f "$cfg" ]]; then sed -i -e 's/Try or Install Ubuntu/Try or Install PunkSway/g' -e 's/Install Ubuntu/Install PunkSway/g' -e 's/Ubuntu 26\.04 LTS/PunkSway 26.04 LTS/g' "$cfg"; fi
 done
-printf '%s\n' 'PunkSway 26.04 LTS amd64 — Ubuntu-based Blue Neon Sway remix' > "$TREE/.disk/info"
+printf '%s\n' 'PunkSway 26.04 LTS amd64 — Ubuntu-based Blue Neon Hyprland remix' > "$TREE/.disk/info"
 echo "[5/7] Rebuilding compressed live filesystem..."
 ORIGINAL_SQ="$TREE/casper/filesystem.squashfs"
 SQ_INFO="$(unsquashfs -s "$ORIGINAL_SQ" 2>&1 || true)"
