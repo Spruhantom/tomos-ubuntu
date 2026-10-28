@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
-for script in "$ROOT/build.sh" "$ROOT/scripts/build-in-container.sh" "$ROOT/scripts/build-tomphone-deb.sh" "$ROOT/scripts/punksway-polkit-agent.sh" "$ROOT/scripts/install-caelestia.sh"; do
+for script in "$ROOT/build.sh" "$ROOT/scripts/build-in-container.sh" "$ROOT/scripts/build-tomphone-deb.sh" "$ROOT/scripts/install-tomphone.sh" "$ROOT/scripts/punksway-polkit-agent.sh" "$ROOT/scripts/install-caelestia.sh"; do
     bash -n "$script"
     echo "shell syntax OK: ${script#"$ROOT"/}"
 done
@@ -27,6 +27,7 @@ required = [
     "apps/tomphone/share/applications/tomphone.desktop",
     "apps/tomphone/share/icons/hicolor/scalable/apps/tomphone.svg",
     "scripts/build-tomphone-deb.sh",
+    "scripts/install-tomphone.sh",
     "config/plymouth/tomos.plymouth",
     "config/plymouth/tomos.script",
     "config/calamares/settings.conf",
@@ -82,6 +83,10 @@ print(f"package and build requirements OK: {len(packages)} packages")
 package_builder = (root / "scripts/build-in-container.sh").read_text()
 if "scripts/build-tomphone-deb.sh" not in package_builder or "tomphone_0.1.0_amd64.deb" not in package_builder:
     raise SystemExit("Tomphone .deb is not built and installed by the ISO build")
+installer = (root / "scripts/install-tomphone.sh").read_text()
+if "https://codeload.github.com/Spruhantom/tomos-ubuntu" not in installer or "apt-get install -y" not in installer:
+    raise SystemExit("Tomphone one-line installer is missing source download or dependency installation")
+print("Tomphone curl installer checks OK")
 if "dpkg-deb --root-owner-group --build" not in (root / "scripts/build-tomphone-deb.sh").read_text():
     raise SystemExit("Tomphone package builder does not create a Debian package")
 print("Tomphone Ubuntu package integration checks OK")
