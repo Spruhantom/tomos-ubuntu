@@ -9,7 +9,7 @@
 - Sway window manager, Waybar panel, Wofi app launcher and Foot terminal.
 - Custom neon-blue wallpaper, cyan focus borders, violet accents and matching Waybar, Wofi, Foot and Mako styles.
 - LightDM with a Sway-first session choice.
-- A custom-branded Calamares installer with disk partitioning, user setup and GRUB integration (requires boot-testing before use).
+- A custom-branded Calamares installer configuration and launch icon, plus partitioning tools. The installer configuration is experimental until tested in a VM on both UEFI and BIOS systems.
 - NetworkManager tray applet, PipeWire tools, screenshots, clipboard tools, idle locking and a quick-start guide.
 - Build scripts to customise the live filesystem and preserve the source ISO's boot setup.
 
