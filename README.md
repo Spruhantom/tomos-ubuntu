@@ -7,7 +7,7 @@
 ## What's included
 
 - Hyprland/Wayland as the only supported window manager session.
-- Caelestia Shell integration notes and an optional source checkout helper. Caelestia itself is not automatically built into the ISO because its Quickshell/Qt dependency versions need validation on Ubuntu 26.04. Waybar and Wofi remain as a functional fallback until Caelestia is installed.
+- A custom neon-blue Caelestia Shell configuration with translucent panels, rounded surfaces, five workspaces, and dynamic colours driven by the Tom OS wallpaper. Caelestia itself is not automatically built into the ISO because its Quickshell/Qt dependency versions need validation on Ubuntu 26.04; Waybar and Wofi remain as a fallback.
 - Tom OS-inspired purple/neon desktop based on the supplied reference: scenic neon wallpaper, slim top panel, five workspaces, translucent floating bottom app dock, rounded dark windows and coordinated colours.
 - Ly TTY display/login manager; choose the Hyprland session at login. Hyprland is the sole supported window manager.
 - A custom-branded Calamares installer configuration and launch icon, plus partitioning tools. The installer configuration is experimental until tested in a VM on both UEFI and BIOS systems.
@@ -48,7 +48,7 @@ dist/PunkSway-26.04-amd64.iso.sha256
 
 ## Hyprland and Caelestia status
 
-The project now includes `config/hypr/hyprland.conf` and `scripts/install-caelestia.sh`. The helper only checks out Caelestia Shell source; it does not install dependencies or compile it. Follow the current upstream requirements at <https://github.com/caelestia-dots/shell>, including the required git version of Quickshell and `caelestia-cli`. Ubuntu 26.04 compatibility is experimental and unverified. The ISO build does not yet include a working, prebuilt Caelestia Shell.
+The project includes `config/caelestia/shell.json`, which sets a neon-blue/cyan dynamic theme, translucent layers, rounded styling, five workspaces and the Tom OS wallpaper directory. When Caelestia is installed, Hyprland starts it and requests the wallpaper-derived dynamic scheme. The project also includes `scripts/install-caelestia.sh`, which only checks out the shell source; it does not install dependencies or compile it. Follow the upstream requirements at <https://github.com/caelestia-dots/shell>, including the git version of Quickshell and `caelestia-cli`. Ubuntu 26.04 compatibility remains experimental and unverified, and the ISO does not yet include a working prebuilt Caelestia Shell.
 
 Sway has been removed from the package list and build configuration. Test the Hyprland session in a VM before using the image on hardware.
 
@@ -75,7 +75,8 @@ Boot the generated ISO in a virtual machine before installing it on physical har
 ## Customisation
 
 - `config/hypr/hyprland.conf`: experimental Hyprland session settings.
-- `config/waybar/`: top panel, bottom dock and their styles.
+- `config/waybar/`: top panel, bottom dock and their styles (fallback).
+- `config/caelestia/shell.json`: Caelestia neon-blue theme and shell layout.
 - `config/wofi/style.css`, `config/foot/foot.ini`, `config/mako/config`: application styling.
 - `assets/render_wallpaper.py`: wallpaper generator.
 - `config/zsh/.zshrc`: default Zsh prompt, aliases and Fastfetch startup.
