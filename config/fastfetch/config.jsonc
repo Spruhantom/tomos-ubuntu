@@ -7,7 +7,7 @@
     "padding": { "top": 1, "left": 1 }
   },
   "display": {
-    "separator": "  [38;2;0;220;255m>[0m "
+    "separator": "  [38;2;0;220;255m>[0m "
   },
   "modules": [
     "title",
