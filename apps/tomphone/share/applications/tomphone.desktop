@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Tomphone
+Comment=Make and receive SIP audio calls
+Exec=tomphone
+Icon=tomphone
+Terminal=false
+Type=Application
+Categories=Network;Telephony;AudioVideo;
+Keywords=SIP;VoIP;phone;call;
