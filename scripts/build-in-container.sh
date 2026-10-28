@@ -102,13 +102,14 @@ chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get update
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${PACKAGES[@]}"
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get purge -y gdm3 lightdm lightdm-gtk-greeter || true
 
-echo "[4/7] Applying PunkSway configuration and Calamares installer..."
+echo "[4/7] Applying PunkSway configuration, Zsh/Fastfetch, and Calamares installer..."
 install -D -m 0644 "$PROJECT/config/calamares/settings.conf" "$ROOT/etc/calamares/settings.conf"
 if [[ -d "$PROJECT/config/calamares/modules" ]]; then cp -a "$PROJECT/config/calamares/modules/." "$ROOT/etc/calamares/modules/"; fi
 install -D -m 0644 "$PROJECT/config/calamares/branding/punk/branding.desc" "$ROOT/usr/share/calamares/branding/punk/branding.desc"
 install -D -m 0644 "$PROJECT/config/calamares/branding/punk/show.html" "$ROOT/usr/share/calamares/branding/punk/show.html"
 install -D -m 0644 "$PROJECT/config/punksway-installer.desktop" "$ROOT/usr/share/applications/punksway-installer.desktop"
 install -D -m 0644 "$PROJECT/assets/neon-punk.png" "$ROOT/usr/share/backgrounds/punksway/neon-punk.png"
+install -D -m 0644 "$PROJECT/config/fastfetch/fastfetch-logo.txt" "$ROOT/usr/share/punksway/fastfetch-logo.txt"
 install -D -m 0755 "$PROJECT/scripts/punksway-polkit-agent.sh" "$ROOT/usr/local/bin/punksway-polkit-agent"
 copy_user_config() {
     local destination="$1"
@@ -124,12 +125,24 @@ copy_user_config() {
     install -D -m 0644 "$PROJECT/config/mako/config" "$destination/.config/mako/config"
     install -D -m 0644 "$PROJECT/config/gtk-3.0/settings.ini" "$destination/.config/gtk-3.0/settings.ini"
     install -D -m 0644 "$PROJECT/config/xdg-desktop-portal/portals.conf" "$destination/.config/xdg-desktop-portal/portals.conf"
+    install -D -m 0644 "$PROJECT/config/zsh/.zshrc" "$destination/.zshrc"
+    install -D -m 0644 "$PROJECT/config/fastfetch/config.jsonc" "$destination/.config/fastfetch/config.jsonc"
 }
 copy_user_config "$ROOT/etc/skel"
+# Set Zsh as the default for newly created accounts.
+if [[ -f "$ROOT/etc/adduser.conf" ]]; then
+    if grep -qE '^#?DSHELL=' "$ROOT/etc/adduser.conf"; then
+        sed -i -E 's|^#?DSHELL=.*|DSHELL=/usr/bin/zsh|' "$ROOT/etc/adduser.conf"
+    else
+        printf '\nDSHELL=/usr/bin/zsh\n' >> "$ROOT/etc/adduser.conf"
+    fi
+fi
 if grep -q '^ubuntu:' "$ROOT/etc/passwd"; then
     IFS=: read -r _ _ LIVE_UID LIVE_GID _ < <(grep '^ubuntu:' "$ROOT/etc/passwd")
     LIVE_HOME=/home/ubuntu; mkdir -p "$ROOT$LIVE_HOME"; copy_user_config "$ROOT$LIVE_HOME"
     chown -R "$LIVE_UID:$LIVE_GID" "$ROOT$LIVE_HOME/.config"
+    chown "$LIVE_UID:$LIVE_GID" "$ROOT$LIVE_HOME/.zshrc"
+    chroot "$ROOT" usermod -s /usr/bin/zsh ubuntu
 fi
 install -D -m 0644 "$PROJECT/config/punksway-quickstart.desktop" "$ROOT/usr/share/applications/punksway-quickstart.desktop"
 install -D -m 0644 "$PROJECT/QUICKSTART.txt" "$ROOT/usr/share/doc/punksway/QUICKSTART.txt"
