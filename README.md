@@ -6,7 +6,7 @@
 
 ## Plymouth boot splash
 
-The image includes a custom Tom OS purple/cyan Plymouth theme. The build renders the splash artwork from `assets/render_plymouth.py`, installs the script theme and enables the Plymouth script plugin. The progress bar is updated from Plymouth boot-progress callbacks, with a subtle pulse while progress is still near zero. This has been statically configured but still needs an ISO build and VM boot test.
+The image includes a custom Tom OS purple/cyan Plymouth theme. The build renders the splash artwork from `assets/render_plymouth.py`, installs the script theme and enables the Plymouth script plugin. The progress bar fill is resized from Plymouth boot-progress callbacks, so it reflects reported boot progress. This has been statically configured but still needs an ISO build and VM boot test.
 
 ## Base system and kernel
 
