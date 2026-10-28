@@ -17,10 +17,9 @@ fill_image = Image("tomos-progress-fill.png");
 progress_sprite = Sprite(fill_image.Scale(1, 12));
 progress = 0.0;
 
-fun update_progress (duration, value) {
-    # Plymouth passes the boot progress as the first argument (0.0 to 1.0),
-    # followed by elapsed boot time. Clamp it before resizing the fill.
-    progress = duration;
+fun update_progress (progress_value, elapsed_time) {
+    # Plymouth passes progress (0.0 to 1.0) first, then elapsed boot time.
+    progress = progress_value;
     if (progress < 0.0) progress = 0.0;
     if (progress > 1.0) progress = 1.0;
     width = Math.Int(754 * progress);
