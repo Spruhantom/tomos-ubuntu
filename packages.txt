@@ -7,6 +7,8 @@ waybar
 wofi
 foot
 mako-notifier
+zsh
+fastfetch
 
 # Wayland tools
 xwayland
