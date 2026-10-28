@@ -97,7 +97,7 @@ tar -xzf "$WORK/project.tar.gz" --strip-components=1 -C "$WORK/project"
 
 echo "[2/4] Downloading the official Ubuntu 26.10 Desktop amd64 ISO and checksums..."
 curl --fail --location --retry 3 --silent --show-error "$UBUNTU_BASE/SHA256SUMS" -o "$WORK/SHA256SUMS"
-curl --fail --location --retry 3 --silent --show-error "$UBUNTU_BASE/$ISO_NAME" -o "$WORK/$ISO_NAME"
+curl --fail --location --retry 3 --progress-bar --show-error "$UBUNTU_BASE/$ISO_NAME" -o "$WORK/$ISO_NAME"
 checksum_line="$(awk -v name="$ISO_NAME" '{
     filename = $2
     sub(/^[*]/, "", filename)
