@@ -109,15 +109,10 @@ install -D -m 0644 "$PROJECT/config/calamares/branding/punk/branding.desc" "$ROO
 install -D -m 0644 "$PROJECT/config/calamares/branding/punk/show.html" "$ROOT/usr/share/calamares/branding/punk/show.html"
 install -D -m 0644 "$PROJECT/config/punksway-installer.desktop" "$ROOT/usr/share/applications/punksway-installer.desktop"
 install -D -m 0644 "$PROJECT/assets/neon-punk.png" "$ROOT/usr/share/backgrounds/punksway/neon-punk.png"
-install -D -m 0755 "$PROJECT/scripts/punksway-live-login.sh" "$ROOT/usr/local/sbin/punksway-live-login"
 install -D -m 0755 "$PROJECT/scripts/punksway-polkit-agent.sh" "$ROOT/usr/local/bin/punksway-polkit-agent"
-install -D -m 0644 "$PROJECT/config/systemd/punksway-live-login.service" "$ROOT/etc/systemd/system/punksway-live-login.service"
 copy_user_config() {
     local destination="$1"
-    install -D -m 0644 "$PROJECT/config/sway/config" "$destination/.config/sway/config"
     install -D -m 0644 "$PROJECT/config/hypr/hyprland.conf" "$destination/.config/hypr/hyprland.conf"
-    install -D -m 0644 "$PROJECT/config/waybar/config.jsonc" "$destination/.config/waybar/config.jsonc"
-    install -D -m 0644 "$PROJECT/config/waybar/style.css" "$destination/.config/waybar/style.css"
     install -D -m 0644 "$PROJECT/config/wofi/style.css" "$destination/.config/wofi/style.css"
     install -D -m 0644 "$PROJECT/config/foot/foot.ini" "$destination/.config/foot/foot.ini"
     install -D -m 0644 "$PROJECT/config/mako/config" "$destination/.config/mako/config"
@@ -142,7 +137,6 @@ PunkSway 26.04 LTS — Blue Neon Sway
 Ubuntu-based live environment
 ISSUE
 mkdir -p "$ROOT/etc/systemd/system/graphical.target.wants"
-ln -sfn /etc/systemd/system/punksway-live-login.service "$ROOT/etc/systemd/system/graphical.target.wants/punksway-live-login.service"
 systemctl --root="$ROOT" disable gdm3.service lightdm.service >/dev/null 2>&1 || true
 rm -f "$ROOT/etc/systemd/system/display-manager.service"
 systemctl --root="$ROOT" enable ly.service
