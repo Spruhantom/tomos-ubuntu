@@ -4,6 +4,10 @@
 
 > This repository contains the build project, not a prebuilt multi-gigabyte ISO. Supply the official Ubuntu base ISO; the scripts generate `dist/PunkSway-26.10-amd64.iso` locally. The source ISO is never changed.
 
+## Plymouth boot splash
+
+The image includes a custom Tom OS purple/cyan Plymouth theme. The build renders the splash artwork from `assets/render_plymouth.py`, installs the script theme and enables the Plymouth script plugin. The progress bar is updated from Plymouth boot-progress callbacks, with a subtle pulse while progress is still near zero. This has been statically configured but still needs an ISO build and VM boot test.
+
 ## Base system and kernel
 
 Tom OS/PunkSway now targets Ubuntu 26.10 (Stonking Stingray), whose official release ships Linux 7.3. The build installs the `linux-generic` metapackage and checks that a Linux 7.3 generic kernel image package is present before repacking the ISO. Ubuntu 26.10 is an interim release with support through July 2027, not an LTS release. The kernel shipped on the original release image was based on 7.3-rc6; normal Ubuntu archive updates are expected to provide subsequent kernel updates. See the [official Ubuntu 26.10 release notes](https://documentation.ubuntu.com/release-notes/26.10/).
@@ -83,6 +87,7 @@ Boot the generated ISO in a virtual machine before installing it on physical har
 - `config/caelestia/shell.json`: Caelestia neon-blue theme and shell layout.
 - `config/wofi/style.css`, `config/foot/foot.ini`, `config/mako/config`: application styling.
 - `assets/render_wallpaper.py`: wallpaper generator.
+- `assets/render_plymouth.py`, `config/plymouth/`: Tom OS Plymouth boot splash and progress bar.
 - `config/zsh/.zshrc`: default Zsh prompt, aliases and Fastfetch startup.
 - `config/fastfetch/`: custom terminal system summary and Tom OS ASCII logo.
 - `packages.txt`: Ubuntu packages included in the image.
