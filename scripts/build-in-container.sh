@@ -97,10 +97,10 @@ while IFS= read -r line; do
     [[ -n "$line" ]] && PACKAGES+=("$line")
 done < "$PROJECT/packages.txt"
 echo "[3/7] Installing desktop packages..."
-printf 'lightdm shared/default-x-display-manager select lightdm\n' | chroot "$ROOT" debconf-set-selections
+printf 'shared/default-x-display-manager select ly\n' | chroot "$ROOT" debconf-set-selections
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get update
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${PACKAGES[@]}"
-chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get purge -y gdm3 || true
+chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get purge -y gdm3 lightdm lightdm-gtk-greeter || true
 
 echo "[4/7] Applying PunkSway configuration and Calamares installer..."
 install -D -m 0644 "$PROJECT/config/calamares/settings.conf" "$ROOT/etc/calamares/settings.conf"
@@ -112,8 +112,6 @@ install -D -m 0644 "$PROJECT/assets/neon-punk.png" "$ROOT/usr/share/backgrounds/
 install -D -m 0755 "$PROJECT/scripts/punksway-live-login.sh" "$ROOT/usr/local/sbin/punksway-live-login"
 install -D -m 0755 "$PROJECT/scripts/punksway-polkit-agent.sh" "$ROOT/usr/local/bin/punksway-polkit-agent"
 install -D -m 0644 "$PROJECT/config/systemd/punksway-live-login.service" "$ROOT/etc/systemd/system/punksway-live-login.service"
-install -D -m 0644 "$PROJECT/config/lightdm/50-punksway.conf" "$ROOT/etc/lightdm/lightdm.conf.d/50-punksway.conf"
-install -D -m 0644 "$PROJECT/config/lightdm/lightdm-gtk-greeter.conf" "$ROOT/etc/lightdm/lightdm-gtk-greeter.conf"
 copy_user_config() {
     local destination="$1"
     install -D -m 0644 "$PROJECT/config/sway/config" "$destination/.config/sway/config"
@@ -143,11 +141,11 @@ cat > "$ROOT/etc/issue" <<'ISSUE'
 PunkSway 26.04 LTS — Blue Neon Sway
 Ubuntu-based live environment
 ISSUE
-mkdir -p "$ROOT/etc/lightdm/lightdm.conf.d" "$ROOT/etc/systemd/system/graphical.target.wants"
+mkdir -p "$ROOT/etc/systemd/system/graphical.target.wants"
 ln -sfn /etc/systemd/system/punksway-live-login.service "$ROOT/etc/systemd/system/graphical.target.wants/punksway-live-login.service"
-systemctl --root="$ROOT" disable gdm3.service >/dev/null 2>&1 || true
+systemctl --root="$ROOT" disable gdm3.service lightdm.service >/dev/null 2>&1 || true
 rm -f "$ROOT/etc/systemd/system/display-manager.service"
-systemctl --root="$ROOT" enable lightdm.service
+systemctl --root="$ROOT" enable ly.service
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get clean
 rm -rf "$ROOT/var/lib/apt/lists"/*
 cleanup_mounts; restore_chroot_files; RESOLV_KIND=missing; POLICY_WAS_PRESENT=0; POLICY_BACKUP=""
