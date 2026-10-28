@@ -1,0 +1,15 @@
+{
+  "layer": "top",
+  "position": "bottom",
+  "height": 62,
+  "width": 560,
+  "margin-bottom": 8,
+  "modules-center": ["custom/apps", "custom/files", "custom/browser", "custom/terminal", "custom/settings", "custom/music", "custom/games"],
+  "custom/apps": {"format": "⠿", "tooltip": "Applications", "on-click": "wofi --show drun"},
+  "custom/files": {"format": "📁", "tooltip": "Files", "on-click": "thunar"},
+  "custom/browser": {"format": "🌐", "tooltip": "Browser (select installed browser)", "on-click": "wofi --show drun"},
+  "custom/terminal": {"format": "▸_", "tooltip": "Terminal", "on-click": "foot"},
+  "custom/settings": {"format": "⚙", "tooltip": "Settings / app launcher", "on-click": "wofi --show drun"},
+  "custom/music": {"format": "♫", "tooltip": "Music apps", "on-click": "wofi --show drun"},
+  "custom/games": {"format": "◈", "tooltip": "Games", "on-click": "wofi --show drun"}
+}
