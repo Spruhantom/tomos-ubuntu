@@ -34,9 +34,7 @@ open the NetworkManager connection editor; the volume module opens pavucontrol.
 
 LIVE SESSION VS INSTALLED SYSTEM
 --------------------------------
-The live ISO autologs into the temporary ubuntu user. The autologin is enabled
-only when the kernel command line contains boot=casper; an installed system
-uses a regular login screen and defaults to Sway. User defaults are copied from
+Ly is the configured display/login manager and presents a TTY-based session selector. Choose Hyprland for the intended desktop or Sway as a fallback. Automatic live-session login has been disabled because the previous LightDM-specific autologin hook does not apply to Ly. User defaults are copied from
 /etc/skel during account creation.
 
 INSTALLING
