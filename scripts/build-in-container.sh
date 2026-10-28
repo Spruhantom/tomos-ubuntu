@@ -183,8 +183,9 @@ chroot "$ROOT" update-alternatives --set default.plymouth /usr/share/plymouth/th
 chroot "$ROOT" update-initramfs -u -k all
 # The ISO boots from files in /casper, so keep them in sync with the kernel
 # and initramfs installed in the compressed live filesystem.
-KERNEL_FILE="$(find "$ROOT/boot" -maxdepth 1 -type f -name 'vmlinuz-*' -printf '%f\\n' | sort -V | tail -n 1)"
-[[ -n "$KERNEL_FILE" ]] || fail "No installed kernel image found in the live filesystem."
+KERNEL_PATH="$(find "$ROOT/boot" -maxdepth 1 -type f -name 'vmlinuz-*' -print | sort -V | tail -n 1)"
+[[ -n "$KERNEL_PATH" ]] || fail "No installed kernel image found in the live filesystem."
+KERNEL_FILE="${KERNEL_PATH##*/}"
 KERNEL_VERSION="${KERNEL_FILE#vmlinuz-}"
 INITRD_FILE="initrd.img-$KERNEL_VERSION"
 [[ -s "$ROOT/boot/$INITRD_FILE" ]] || fail "Matching initramfs missing for kernel $KERNEL_VERSION."
