@@ -181,6 +181,16 @@ PLYMOUTH
 chroot "$ROOT" update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/tomos/tomos.plymouth 100
 chroot "$ROOT" update-alternatives --set default.plymouth /usr/share/plymouth/themes/tomos/tomos.plymouth
 chroot "$ROOT" update-initramfs -u -k all
+# The ISO boots from files in /casper, so keep them in sync with the kernel
+# and initramfs installed in the compressed live filesystem.
+KERNEL_FILE="$(find "$ROOT/boot" -maxdepth 1 -type f -name 'vmlinuz-*' -printf '%f\\n' | sort -V | tail -n 1)"
+[[ -n "$KERNEL_FILE" ]] || fail "No installed kernel image found in the live filesystem."
+KERNEL_VERSION="${KERNEL_FILE#vmlinuz-}"
+INITRD_FILE="initrd.img-$KERNEL_VERSION"
+[[ -s "$ROOT/boot/$INITRD_FILE" ]] || fail "Matching initramfs missing for kernel $KERNEL_VERSION."
+install -m 0644 "$ROOT/boot/$KERNEL_FILE" "$TREE/casper/vmlinuz"
+install -m 0644 "$ROOT/boot/$INITRD_FILE" "$TREE/casper/initrd"
+echo "ISO boot kernel/initrd synchronized to kernel $KERNEL_VERSION."
 install -D -m 0644 "$PROJECT/config/fastfetch/fastfetch-logo.txt" "$ROOT/usr/share/punksway/fastfetch-logo.txt"
 install -D -m 0755 "$PROJECT/scripts/punksway-polkit-agent.sh" "$ROOT/usr/local/bin/punksway-polkit-agent"
 copy_user_config() {
@@ -231,6 +241,15 @@ ISSUE
 mkdir -p "$ROOT/etc/systemd/system/graphical.target.wants"
 systemctl --root="$ROOT" disable gdm3.service lightdm.service >/dev/null 2>&1 || true
 rm -f "$ROOT/etc/systemd/system/display-manager.service"
+# Configure the expected live-session autologin for the SDDM display manager.
+[[ -f "$ROOT/usr/share/wayland-sessions/hyprland.desktop" ]] || fail "Hyprland Wayland session file is missing."
+mkdir -p "$ROOT/etc/sddm.conf.d"
+cat > "$ROOT/etc/sddm.conf.d/10-punksway-autologin.conf" <<'SDDM'
+[Autologin]
+User=ubuntu
+Session=hyprland.desktop
+Relogin=true
+SDDM
 systemctl --root="$ROOT" enable sddm.service
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get clean
 rm -rf "$ROOT/var/lib/apt/lists"/*
