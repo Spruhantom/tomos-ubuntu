@@ -57,7 +57,7 @@ printf '%s\n' "$ISO_INFO" | grep -E 'Volume Id|Volume id|PVD' | head -n 8 || tru
 printf '%s\n' "$ISO_INFO" | grep -qi 'Ubuntu' || fail "Use the official Ubuntu Desktop ISO."
 rm -rf "$WORK"
 mkdir -p "$TREE"
-echo "[1/7] Extracting original ISO tree..."
+echo "[1/8] Extracting original ISO tree..."
 xorriso -osirrox on -indev "$BASE_ISO" -extract / "$TREE"
 [[ -f "$TREE/casper/filesystem.squashfs" ]] || fail "No casper/filesystem.squashfs found."
 [[ -f "$TREE/.disk/info" ]] || fail "No .disk/info found."
@@ -66,7 +66,7 @@ printf 'Source image: %s\n' "$SOURCE_INFO"
 printf '%s' "$SOURCE_INFO" | grep -q '26\.10' || fail "Expected Ubuntu 26.10."
 printf '%s' "$SOURCE_INFO" | grep -qi 'amd64' || fail "Expected Ubuntu Desktop amd64."
 
-echo "[2/7] Unpacking the live filesystem..."
+echo "[2/8] Unpacking the live filesystem..."
 BUILD_JOBS="${BUILD_JOBS:-$(nproc)}"
 [[ "$BUILD_JOBS" =~ ^[0-9]+$ ]] && (( BUILD_JOBS > 0 )) || BUILD_JOBS="$(nproc)"
 (( BUILD_JOBS > 8 )) && BUILD_JOBS=8
@@ -97,10 +97,10 @@ while IFS= read -r line; do
     line="${line%%#*}"; line="$(printf '%s' "$line" | xargs)"
     [[ -n "$line" ]] && PACKAGES+=("$line")
 done < "$PROJECT/packages.txt"
-echo "[3/7] Building Tomphone Ubuntu package..."
+echo "[3/8] Building Tomphone Ubuntu package..."
 PROJECT=/work BUILD_JOBS="${BUILD_JOBS:-$(nproc)}" bash "$PROJECT/scripts/build-tomphone-deb.sh"
 install -D -m 0644 "$PROJECT/build/tomphone_0.1.0_amd64.deb" "$ROOT/tmp/tomphone_0.1.0_amd64.deb"
-echo "[3/7] Installing desktop packages..."
+echo "[4/8] Installing desktop packages..."
 printf 'shared/default-x-display-manager select ly\n' | chroot "$ROOT" debconf-set-selections
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get update
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${PACKAGES[@]}"
@@ -111,7 +111,7 @@ KERNEL_PACKAGES="$(chroot "$ROOT" dpkg-query -W -f='${binary:Package} ${Version}
 printf '%s\n' "$KERNEL_PACKAGES"
 printf '%s\n' "$KERNEL_PACKAGES" | grep -Eq 'linux-image-7\.3\.[0-9]+-[0-9]+-generic' || fail "Ubuntu 26.10 kernel 7.3 image package was not installed."
 
-echo "[4/7] Applying PunkSway configuration, Zsh/Fastfetch, and Calamares installer..."
+echo "[5/8] Applying PunkSway configuration, Zsh/Fastfetch, and Calamares installer..."
 install -D -m 0644 "$PROJECT/config/calamares/settings.conf" "$ROOT/etc/calamares/settings.conf"
 if [[ -d "$PROJECT/config/calamares/modules" ]]; then cp -a "$PROJECT/config/calamares/modules/." "$ROOT/etc/calamares/modules/"; fi
 install -D -m 0644 "$PROJECT/config/calamares/branding/punk/branding.desc" "$ROOT/usr/share/calamares/branding/punk/branding.desc"
@@ -192,7 +192,7 @@ for cfg in "$TREE/boot/grub/grub.cfg" "$TREE/boot/grub/loopback.cfg"; do
     if [[ -f "$cfg" ]]; then sed -i -e 's/Try or Install Ubuntu/Try or Install PunkSway/g' -e 's/Install Ubuntu/Install PunkSway/g' -e 's/Ubuntu 26\.10 LTS/PunkSway 26.10/g' "$cfg"; fi
 done
 printf '%s\n' 'PunkSway 26.10 amd64 — Ubuntu-based Blue Neon Hyprland remix' > "$TREE/.disk/info"
-echo "[5/7] Rebuilding compressed live filesystem..."
+echo "[6/8] Rebuilding compressed live filesystem..."
 ORIGINAL_SQ="$TREE/casper/filesystem.squashfs"
 SQ_INFO="$(unsquashfs -s "$ORIGINAL_SQ" 2>&1 || true)"
 SQ_COMP="$(printf '%s\n' "$SQ_INFO" | awk '$1 == "Compression" { print $2; exit }')"
@@ -204,7 +204,7 @@ mksquashfs "$ROOT" "$ORIGINAL_SQ" -comp "$SQ_COMP" -b "$SQ_BLOCK" -noappend -pro
 du -sx --block-size=1 "$ROOT" | awk '{print $1}' > "$TREE/casper/filesystem.size"
 (cd "$TREE"; find . -type f ! -name md5sum.txt -print0 | sort -z | xargs -0 -r md5sum > md5sum.txt)
 rm -rf "$ROOT"
-echo "[6/7] Rebuilding bootable ISO..."
+echo "[7/8] Rebuilding bootable ISO..."
 rm -f "$OUTPUT"
 XORRISO_ARGS=(-indev "$BASE_ISO" -outdev "$OUTPUT" -boot_image any replay
     -map "$TREE/casper/filesystem.squashfs" /casper/filesystem.squashfs
@@ -215,7 +215,7 @@ XORRISO_ARGS=(-indev "$BASE_ISO" -outdev "$OUTPUT" -boot_image any replay
 if [[ -f "$TREE/boot/grub/loopback.cfg" ]]; then XORRISO_ARGS+=(-map "$TREE/boot/grub/loopback.cfg" /boot/grub/loopback.cfg); fi
 XORRISO_ARGS+=(-commit -end)
 xorriso "${XORRISO_ARGS[@]}"
-echo "[7/7] Checking boot records and writing SHA-256..."
+echo "[8/8] Checking boot records and writing SHA-256..."
 xorriso -indev "$OUTPUT" -report_el_torito plain > "$WORK/eltorito-report.txt" 2>&1
 grep -qi 'El Torito' "$WORK/eltorito-report.txt" || { cat "$WORK/eltorito-report.txt"; fail "Could not verify boot records."; }
 (cd "$(dirname "$OUTPUT")" && sha256sum "$(basename "$OUTPUT")" > "$(basename "$OUTPUT").sha256")
