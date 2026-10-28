@@ -1,12 +1,8 @@
-# Core desktop (Sway retained as fallback)
-sway
+# Core desktop
 hyprland
 waybar
 wofi
 foot
-swaybg
-swaylock
-swayidle
 mako-notifier
 
 # Wayland tools
