@@ -10,6 +10,6 @@ cat > /etc/lightdm/lightdm.conf.d/99-punksway-live-autologin.conf <<'CONF'
 [Seat:*]
 autologin-user=ubuntu
 autologin-user-timeout=0
-autologin-session=sway
+autologin-session=hyprland
 CONF
 chmod 0644 /etc/lightdm/lightdm.conf.d/99-punksway-live-autologin.conf
