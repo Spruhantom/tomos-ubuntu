@@ -1,28 +1,28 @@
 window {
     margin: 0px;
-    border: 2px solid #00e5ff;
-    border-radius: 10px;
-    background-color: rgba(5, 10, 22, 0.97);
-    color: #e5faff;
-    font-family: "JetBrains Mono", monospace;
+    border: 2px solid #874bff;
+    border-radius: 16px;
+    background-color: rgba(8, 7, 24, 0.97);
+    color: #f3edff;
+    font-family: "JetBrains Mono", sans-serif;
     font-size: 13px;
 }
 #input {
     margin: 12px;
-    border: 1px solid #146184;
-    border-radius: 6px;
-    color: #e5faff;
-    background-color: #09182a;
+    border: 1px solid #6336c9;
+    border-radius: 10px;
+    color: #f3edff;
+    background-color: #14102d;
     padding: 10px;
 }
 #inner-box { margin: 0 8px 8px 8px; }
 #outer-box { margin: 4px; }
 #scroll { margin: 0; }
-#entry { padding: 9px 12px; margin: 2px 4px; border-radius: 5px; }
+#entry { padding: 9px 12px; margin: 2px 4px; border-radius: 9px; }
 #entry:selected {
-    background: linear-gradient(90deg, #00a9d7, #3456d7);
+    background: linear-gradient(90deg, #6926d9, #a02bff);
     color: #ffffff;
-    border: 1px solid #7aefff;
+    border: 1px solid #c7a4ff;
 }
 #text { margin: 0 8px; }
 #img { margin-right: 8px; }
