@@ -127,6 +127,7 @@ copy_user_config() {
     install -D -m 0644 "$PROJECT/config/xdg-desktop-portal/portals.conf" "$destination/.config/xdg-desktop-portal/portals.conf"
     install -D -m 0644 "$PROJECT/config/zsh/.zshrc" "$destination/.zshrc"
     install -D -m 0644 "$PROJECT/config/fastfetch/config.jsonc" "$destination/.config/fastfetch/config.jsonc"
+    install -D -m 0644 "$PROJECT/config/caelestia/shell.json" "$destination/.config/caelestia/shell.json"
 }
 copy_user_config "$ROOT/etc/skel"
 # Set Zsh as the default for newly created accounts.
