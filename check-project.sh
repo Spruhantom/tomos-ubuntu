@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
-for script in "$ROOT/build.sh" "$ROOT/scripts/build-in-container.sh" "$ROOT/scripts/punksway-polkit-agent.sh" "$ROOT/scripts/install-caelestia.sh"; do
+for script in "$ROOT/build.sh" "$ROOT/scripts/build-in-container.sh" "$ROOT/scripts/build-tomphone-deb.sh" "$ROOT/scripts/punksway-polkit-agent.sh" "$ROOT/scripts/install-caelestia.sh"; do
     bash -n "$script"
     echo "shell syntax OK: ${script#"$ROOT"/}"
 done
@@ -16,6 +16,17 @@ root = Path(sys.argv[1])
 required = [
     "assets/render_wallpaper.py",
     "assets/render_plymouth.py",
+    "apps/tomphone/tomphone.pro",
+    "apps/tomphone/src/Main.qml",
+    "apps/tomphone/src/backend.cpp",
+    "apps/tomphone/src/backend.h",
+    "apps/tomphone/src/theme.cpp",
+    "apps/tomphone/src/theme.h",
+    "apps/tomphone/src/resources.qrc",
+    "apps/tomphone/debian/control",
+    "apps/tomphone/share/applications/tomphone.desktop",
+    "apps/tomphone/share/icons/hicolor/scalable/apps/tomphone.svg",
+    "scripts/build-tomphone-deb.sh",
     "config/plymouth/tomos.plymouth",
     "config/plymouth/tomos.script",
     "config/calamares/settings.conf",
@@ -52,7 +63,7 @@ packages = [
 packages = [line for line in packages if line]
 if len(packages) != len(set(packages)):
     raise SystemExit("Duplicate package names in packages.txt")
-for package in ("linux-generic", "plymouth", "plymouth-themes"):
+for package in ("linux-generic", "plymouth", "plymouth-themes", "baresip", "libpulse0", "qml6-module-qtquick-controls", "qml6-module-qtquick-layouts", "qml6-module-qtquick-templates", "qml6-module-qtquick-window", "qml6-module-qtquick2"):
     if package not in packages:
         raise SystemExit(f"Missing required package: {package}")
 
@@ -67,6 +78,13 @@ if 'python3 "$PROJECT/assets/render_plymouth.py"' not in container_script:
 if "update-initramfs -u -k all" not in container_script:
     raise SystemExit("Build script does not regenerate initramfs after selecting Plymouth theme")
 print(f"package and build requirements OK: {len(packages)} packages")
+
+package_builder = (root / "scripts/build-in-container.sh").read_text()
+if "scripts/build-tomphone-deb.sh" not in package_builder or "tomphone_0.1.0_amd64.deb" not in package_builder:
+    raise SystemExit("Tomphone .deb is not built and installed by the ISO build")
+if "dpkg-deb --root-owner-group --build" not in (root / "scripts/build-tomphone-deb.sh").read_text():
+    raise SystemExit("Tomphone package builder does not create a Debian package")
+print("Tomphone Ubuntu package integration checks OK")
 
 for rel in (
     "config/waybar/config.jsonc",
