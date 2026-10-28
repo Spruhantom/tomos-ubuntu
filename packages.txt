@@ -1,5 +1,8 @@
 # Core desktop
 hyprland
+hyprlock
+hypridle
+hyprpaper
 waybar
 wofi
 foot
