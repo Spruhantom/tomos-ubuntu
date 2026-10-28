@@ -1,0 +1,58 @@
+{
+  "enabled": true,
+  "appearance": {
+    "rounding": { "scale": 1.15 },
+    "spacing": { "scale": 0.95 },
+    "padding": { "scale": 1.0 },
+    "anim": { "durations": { "scale": 1.05 } },
+    "transparency": {
+      "enabled": true,
+      "base": 0.82,
+      "layers": 0.58
+    },
+    "font": {
+      "scale": 1.0,
+      "clock": "Rubik",
+      "workspaces": "Rubik"
+    }
+  },
+  "background": {
+    "enabled": true,
+    "wallpaperEnabled": true,
+    "desktopClock": { "enabled": false },
+    "visualiser": {
+      "enabled": false,
+      "autoHide": true
+    }
+  },
+  "bar": {
+    "persistent": true,
+    "showOnHover": true,
+    "workspaces": {
+      "shown": 5,
+      "activeIndicator": true,
+      "showUnoccupied": true,
+      "displayType": "shapes"
+    },
+    "clock": {
+      "background": false,
+      "showDate": true,
+      "showIcon": true
+    },
+    "statusIcons": [
+      { "id": "lockStatus", "enabled": true },
+      { "id": "network", "enabled": true },
+      { "id": "bluetooth", "enabled": true },
+      { "id": "battery", "enabled": true }
+    ]
+  },
+  "general": {
+    "apps": {
+      "terminal": ["foot"],
+      "explorer": ["thunar"]
+    }
+  },
+  "paths": {
+    "wallpaperDir": "/usr/share/backgrounds/punksway"
+  }
+}
