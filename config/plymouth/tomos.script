@@ -27,19 +27,8 @@ fun update_progress (duration, value) {
     progress_sprite.SetPosition(track_x + 3, track_y + 3, 11);
 }
 
-fun refresh_callback () {
-    # Keep the progress visible if Plymouth has not received a new callback yet.
-    if (progress < 0.03) {
-        pulse = Math.Int(120 + 70 * Math.Sin(Plymouth.GetTime() * 3));
-        progress_sprite.SetOpacity(pulse / 190.0);
-    } else {
-        progress_sprite.SetOpacity(1.0);
-    }
-}
-
-progress_sprite.SetOpacity(0.85);
+progress_sprite.SetOpacity(0.95);
 Plymouth.SetBootProgressFunction(update_progress);
-Plymouth.SetRefreshFunction(refresh_callback);
 Plymouth.SetQuitFunction(fun () {
     splash_sprite.SetOpacity(0.0);
     track_sprite.SetOpacity(0.0);
