@@ -2,7 +2,7 @@ PUNKSWAY — QUICKSTART
 =====================
 
 PunkHyprland is an Ubuntu-based live desktop project targeting Hyprland with Caelestia Shell. Hyprland is the only supported window manager session.
-The default look is midnight blue, cyan neon and electric violet.
+The default look follows the supplied Tom OS reference: violet neon wallpaper, dark top panel, five workspaces and a rounded floating app dock. Wofi provides application search; the full Omarchy quick-settings shell is not included.
 
 KEYBOARD SHORTCUTS
 ------------------
@@ -29,8 +29,7 @@ Brightness keys     Change display brightness (hardware permitting)
 
 APPS
 ----
-The app launcher lists installed desktop applications. The panel network settings
-open the NetworkManager connection editor; the volume module opens pavucontrol.
+The Wofi launcher lists installed desktop applications. The dock shortcuts open the file manager, terminal and app launcher. The volume module opens pavucontrol.
 
 LIVE SESSION VS INSTALLED SYSTEM
 --------------------------------
