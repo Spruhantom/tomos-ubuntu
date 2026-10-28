@@ -40,7 +40,7 @@ The build compiles the included Qt 6 Tomphone source and creates `build/tomphone
 
 ## One-line full-project ISO build
 
-On an x86_64 Fedora, Ubuntu/Debian, or Arch-based Linux host, this command downloads the project and the official Ubuntu 26.10 Desktop amd64 ISO, verifies the ISO checksum, and builds the complete PunkSway ISO. It installs Podman and helper tools on Fedora and Ubuntu/Debian. On Arch-based hosts, install Podman first with `sudo pacman -Syu podman` to avoid an unsafe partial package upgrade:
+On an x86_64 Fedora, Ubuntu, Debian 12 (Bookworm), Debian 13 (Trixie), or Arch-based Linux host, this command downloads the project and the official Ubuntu 26.10 Desktop amd64 ISO, verifies the ISO checksum, and builds the complete PunkSway ISO. It installs Podman and helper tools on Fedora and Ubuntu/Debian. On Arch-based hosts, install Podman first with `sudo pacman -Syu podman` to avoid an unsafe partial package upgrade:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Spruhantom/tomos-ubuntu/main/scripts/build-punksway-iso.sh | sudo bash
@@ -77,7 +77,7 @@ dist/PunkSway-26.10-amd64.iso
 dist/PunkSway-26.10-amd64.iso.sha256
 ```
 
-**Build requirements:** x86_64 Fedora, Ubuntu/Debian, or Arch-based Linux, internet access, Podman, and approximately 25–35 GB of free scratch space. The first build downloads the Ubuntu container image and installs the required tools inside it.
+**Build requirements:** x86_64 Fedora, Ubuntu, Debian 12 (Bookworm), Debian 13 (Trixie), or Arch-based Linux, internet access, Podman, and approximately 25–35 GB of free scratch space. The first build downloads the Ubuntu container image and installs the required tools inside it.
 
 ## Hyprland and Caelestia status
 
