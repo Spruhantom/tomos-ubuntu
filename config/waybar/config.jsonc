@@ -6,16 +6,15 @@
   "margin-top": 7,
   "margin-left": 9,
   "margin-right": 9,
-  "modules-left": ["sway/workspaces", "sway/mode"],
+  "modules-left": ["hyprland/workspaces"],
   "modules-center": ["clock"],
   "modules-right": ["network", "pulseaudio", "battery", "tray"],
-  "sway/workspaces": {
+  "hyprland/workspaces": {
     "disable-scroll": true,
     "all-outputs": true,
     "format": "{name}",
     "persistent-workspaces": { "1": [], "2": [], "3": [], "4": [], "5": [] }
   },
-  "sway/mode": { "format": "[ {} ]" },
   "clock": {
     "format": "TIME  {:%a %d %b  %H:%M}",
     "tooltip-format": "{:%A, %d %B %Y}\nWeek %V"
