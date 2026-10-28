@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-for script in "$ROOT/build.sh" "$ROOT/scripts/build-in-container.sh" "$ROOT/scripts/punksway-live-login.sh" "$ROOT/scripts/punksway-polkit-agent.sh"; do
+for script in "$ROOT/build.sh" "$ROOT/scripts/build-in-container.sh" "$ROOT/scripts/punksway-live-login.sh" "$ROOT/scripts/punksway-polkit-agent.sh" "$ROOT/scripts/install-caelestia.sh"; do
     bash -n "$script"
     echo "shell syntax OK: ${script#"$ROOT"/}"
 done
@@ -20,6 +20,9 @@ required = [
     "config/punksway-installer.desktop",
     "packages.txt",
     "config/sway/config",
+    "config/hypr/hyprland.conf",
+    "config/hypr/README.md",
+    "scripts/install-caelestia.sh",
     "config/waybar/style.css",
     "config/wofi/style.css",
     "config/foot/foot.ini",
