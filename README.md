@@ -1,13 +1,17 @@
-# PunkSway 26.04 LTS
+# PunkSway 26.10
 
-**An Ubuntu-based live OS concept with a blue-neon punk aesthetic and Hyprland/Wayland as the intended desktop, with no Sway components.** The project is designed to build on an Omarchy Linux host by running the image-customisation tools inside an Ubuntu 26.04 Podman container.
+**An Ubuntu-based live OS concept with a blue-neon punk aesthetic and Hyprland/Wayland as the intended desktop, with no Sway components.** The project is designed to build on an Omarchy Linux host by running the image-customisation tools inside an Ubuntu 26.10 Podman container.
 
-> This repository contains the build project, not a prebuilt multi-gigabyte ISO. Supply the official Ubuntu base ISO; the scripts generate `dist/PunkSway-26.04-amd64.iso` locally. The source ISO is never changed.
+> This repository contains the build project, not a prebuilt multi-gigabyte ISO. Supply the official Ubuntu base ISO; the scripts generate `dist/PunkSway-26.10-amd64.iso` locally. The source ISO is never changed.
+
+## Base system and kernel
+
+Tom OS/PunkSway now targets Ubuntu 26.10 (Stonking Stingray), whose official release ships Linux 7.3. The build installs the `linux-generic` metapackage and checks that a Linux 7.3 generic kernel image package is present before repacking the ISO. Ubuntu 26.10 is an interim release with support through July 2027, not an LTS release. The kernel shipped on the original release image was based on 7.3-rc6; normal Ubuntu archive updates are expected to provide subsequent kernel updates. See the [official Ubuntu 26.10 release notes](https://documentation.ubuntu.com/release-notes/26.10/).
 
 ## What's included
 
 - Hyprland/Wayland as the only supported window manager session.
-- A custom neon-blue Caelestia Shell configuration with translucent panels, rounded surfaces, five workspaces, and dynamic colours driven by the Tom OS wallpaper. Caelestia itself is not automatically built into the ISO because its Quickshell/Qt dependency versions need validation on Ubuntu 26.04; Waybar and Wofi remain as a fallback.
+- A custom neon-blue Caelestia Shell configuration with translucent panels, rounded surfaces, five workspaces, and dynamic colours driven by the Tom OS wallpaper. Caelestia itself is not automatically built into the ISO because its Quickshell/Qt dependency versions need validation on Ubuntu 26.10; Waybar and Wofi remain as a fallback.
 - Tom OS-inspired purple/neon desktop based on the supplied reference: scenic neon wallpaper, slim top panel, five workspaces, translucent floating bottom app dock, rounded dark windows and coordinated colours.
 - Ly TTY display/login manager; choose the Hyprland session at login. Hyprland is the sole supported window manager.
 - A custom-branded Calamares installer configuration and launch icon, plus partitioning tools. The installer configuration is experimental until tested in a VM on both UEFI and BIOS systems.
@@ -23,7 +27,7 @@ Install Podman:
 sudo pacman -S podman
 ```
 
-Download the **Ubuntu 26.04 LTS Desktop amd64** ISO from <https://releases.ubuntu.com/26.04/>.
+Download the **Ubuntu 26.10 Desktop amd64** ISO from <https://releases.ubuntu.com/26.10/>.
 
 Run the project checks:
 
@@ -34,21 +38,21 @@ Run the project checks:
 Build the ISO:
 
 ```bash
-./build.sh /path/to/ubuntu-26.04-desktop-amd64.iso
+./build.sh /path/to/ubuntu-26.10-desktop-amd64.iso
 ```
 
 The output and checksum are:
 
 ```text
-dist/PunkSway-26.04-amd64.iso
-dist/PunkSway-26.04-amd64.iso.sha256
+dist/PunkSway-26.10-amd64.iso
+dist/PunkSway-26.10-amd64.iso.sha256
 ```
 
 **Build requirements:** x86_64 Omarchy Linux, internet access, Podman, and approximately 25–35 GB of free scratch space. The first build downloads the Ubuntu container image and installs the required tools inside it.
 
 ## Hyprland and Caelestia status
 
-The project includes `config/caelestia/shell.json`, which sets a neon-blue/cyan dynamic theme, translucent layers, rounded styling, five workspaces and the Tom OS wallpaper directory. When Caelestia is installed, Hyprland starts it and requests the wallpaper-derived dynamic scheme. The project also includes `scripts/install-caelestia.sh`, which only checks out the shell source; it does not install dependencies or compile it. Follow the upstream requirements at <https://github.com/caelestia-dots/shell>, including the git version of Quickshell and `caelestia-cli`. Ubuntu 26.04 compatibility remains experimental and unverified, and the ISO does not yet include a working prebuilt Caelestia Shell.
+The project includes `config/caelestia/shell.json`, which sets a neon-blue/cyan dynamic theme, translucent layers, rounded styling, five workspaces and the Tom OS wallpaper directory. When Caelestia is installed, Hyprland starts it and requests the wallpaper-derived dynamic scheme. The project also includes `scripts/install-caelestia.sh`, which only checks out the shell source; it does not install dependencies or compile it. Follow the upstream requirements at <https://github.com/caelestia-dots/shell>, including the git version of Quickshell and `caelestia-cli`. Ubuntu 26.10 compatibility remains experimental and unverified, and the ISO does not yet include a working prebuilt Caelestia Shell.
 
 Sway has been removed from the package list and build configuration. Test the Hyprland session in a VM before using the image on hardware.
 
