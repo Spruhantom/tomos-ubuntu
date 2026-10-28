@@ -28,6 +28,12 @@ case "${ID:-}" in
         apt-get update
         apt-get install -y --no-install-recommends ca-certificates curl tar xz-utils coreutils podman
         ;;
+    fedora)
+        if ! command -v podman >/dev/null 2>&1; then
+            dnf install -y podman
+        fi
+        dnf install -y curl tar xz coreutils findutils gawk
+        ;;
     arch|endeavouros|omarchy|manjaro)
         # Avoid a partial Arch upgrade (-Sy). Require Podman to already be installed.
         if ! command -v podman >/dev/null 2>&1; then
@@ -40,9 +46,9 @@ case "${ID:-}" in
                 exit 1
             }
         done
-        ;;
+        ;; 
     *)
-        echo "Unsupported host OS: ${PRETTY_NAME:-unknown}. Use Ubuntu/Debian or an Arch-based Linux system." >&2
+        echo "Unsupported host OS: ${PRETTY_NAME:-unknown}. Use Fedora, Ubuntu/Debian, or an Arch-based Linux system." >&2
         exit 1
         ;;
 esac
