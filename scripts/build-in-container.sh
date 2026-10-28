@@ -146,7 +146,7 @@ echo "[3/8] Building Tomphone Ubuntu package..."
 PROJECT=/work BUILD_JOBS="${BUILD_JOBS:-$(nproc)}" bash "$PROJECT/scripts/build-tomphone-deb.sh"
 install -D -m 0644 "$PROJECT/build/tomphone_0.1.0_amd64.deb" "$ROOT/tmp/tomphone_0.1.0_amd64.deb"
 echo "[4/8] Installing desktop packages..."
-printf 'shared shared/default-x-display-manager select ly\n' | chroot "$ROOT" debconf-set-selections
+printf 'shared shared/default-x-display-manager select sddm\n' | chroot "$ROOT" debconf-set-selections
 if ! chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Retries=3 update; then
     fail "APT update failed inside the live filesystem. Installer CD-ROM sources have been removed; inspect the remaining repository errors above for network or mirror issues."
 fi
@@ -231,7 +231,7 @@ ISSUE
 mkdir -p "$ROOT/etc/systemd/system/graphical.target.wants"
 systemctl --root="$ROOT" disable gdm3.service lightdm.service >/dev/null 2>&1 || true
 rm -f "$ROOT/etc/systemd/system/display-manager.service"
-systemctl --root="$ROOT" enable ly.service
+systemctl --root="$ROOT" enable sddm.service
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get clean
 rm -rf "$ROOT/var/lib/apt/lists"/*
 cleanup_mounts; restore_chroot_files; RESOLV_KIND=missing; POLICY_WAS_PRESENT=0; POLICY_BACKUP=""
