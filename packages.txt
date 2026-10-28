@@ -21,6 +21,15 @@ wl-clipboard
 brightnessctl
 playerctl
 
+# Tomphone SIP softphone runtime
+baresip
+libpulse0
+qml6-module-qtquick-controls
+qml6-module-qtquick-layouts
+qml6-module-qtquick-templates
+qml6-module-qtquick-window
+qml6-module-qtquick2
+
 # Audio, portals, file/network tools
 pipewire-pulse
 pipewire-bin
