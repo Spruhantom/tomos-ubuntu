@@ -65,7 +65,7 @@ Sway has been removed from the package list and build configuration. Test the Hy
 
 ## Test before installing
 
-Boot the generated ISO in a virtual machine before installing it on physical hardware. Verify that the live Sway session, networking, audio and installer work. This project has not yet been verified by booting a generated ISO on real hardware; treat the first build as a test image and keep backups.
+Boot the generated ISO in a virtual machine before installing it on physical hardware. Verify that the live Hyprland session, networking, audio and installer work. This project has not yet been verified by booting a generated ISO on real hardware; treat the first build as a test image and keep backups.
 
 ## Customisation
 
