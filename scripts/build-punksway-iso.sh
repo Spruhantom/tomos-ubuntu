@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# End-to-end PunkSway ISO builder for Ubuntu/Debian or Arch-based Linux hosts.
+# End-to-end PunkSway ISO builder for Fedora, Ubuntu/Debian, or Arch-based Linux hosts.
 # Downloads the project and official Ubuntu base ISO, then builds a custom ISO.
 set -Eeuo pipefail
 
@@ -26,12 +26,12 @@ case "${ID:-}" in
     ubuntu|debian|linuxmint|pop)
         export DEBIAN_FRONTEND=noninteractive
         apt-get update
-        apt-get install -y --no-install-recommends ca-certificates curl tar xz-utils coreutils podman
+        apt-get install -y --no-install-recommends ca-certificates curl tar xz-utils coreutils findutils gawk grep podman
         ;;
     fedora)
-        dnf install -y ca-certificates curl tar xz coreutils findutils gawk podman
+        dnf install -y ca-certificates curl tar xz coreutils findutils gawk grep podman
         ;;
-    arch|endeavouros|omarchy|manjaro)
+    arch|endeavouros|omarchy|manjaro|garuda)
         # Avoid a partial Arch upgrade (-Sy). Require Podman and host tools to already be installed.
         if ! command -v podman >/dev/null 2>&1; then
             echo "Podman is required on Arch-based hosts. Install it with 'sudo pacman -Syu podman', then rerun this command." >&2
