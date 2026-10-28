@@ -29,29 +29,32 @@ case "${ID:-}" in
         apt-get install -y --no-install-recommends ca-certificates curl tar xz-utils coreutils podman
         ;;
     fedora)
-        if ! command -v podman >/dev/null 2>&1; then
-            dnf install -y podman
-        fi
-        dnf install -y curl tar xz coreutils findutils gawk
+        dnf install -y ca-certificates curl tar xz coreutils findutils gawk podman
         ;;
     arch|endeavouros|omarchy|manjaro)
-        # Avoid a partial Arch upgrade (-Sy). Require Podman to already be installed.
+        # Avoid a partial Arch upgrade (-Sy). Require Podman and host tools to already be installed.
         if ! command -v podman >/dev/null 2>&1; then
             echo "Podman is required on Arch-based hosts. Install it with 'sudo pacman -Syu podman', then rerun this command." >&2
             exit 1
         fi
-        for tool in curl tar sha256sum df awk; do
+        for tool in curl tar sha256sum df awk realpath chmod grep; do
             command -v "$tool" >/dev/null 2>&1 || {
                 echo "Missing required tool '$tool'. Install it using your distribution's package manager." >&2
                 exit 1
             }
         done
-        ;; 
+        ;;
     *)
         echo "Unsupported host OS: ${PRETTY_NAME:-unknown}. Use Fedora, Ubuntu/Debian, or an Arch-based Linux system." >&2
         exit 1
         ;;
 esac
+for tool in curl tar sha256sum df awk realpath chmod grep; do
+    command -v "$tool" >/dev/null 2>&1 || {
+        echo "Required command '$tool' is missing." >&2
+        exit 1
+    }
+done
 command -v podman >/dev/null 2>&1 || { echo "Podman could not be installed." >&2; exit 1; }
 
 mkdir -p "$WORK"
