@@ -7,7 +7,7 @@
 ## What's included
 
 - Hyprland/Wayland as the only supported window manager session.
-- Caelestia Shell integration notes and an optional source checkout helper. Caelestia itself is not automatically built into the ISO because its Quickshell/Qt dependency versions need validation on Ubuntu 26.04.
+- Caelestia Shell integration notes and an optional source checkout helper. Caelestia itself is not automatically built into the ISO because its Quickshell/Qt dependency versions need validation on Ubuntu 26.04. Waybar and Wofi remain as a functional fallback until Caelestia is installed.
 - Custom neon-blue wallpaper, cyan focus borders, violet accents and matching Waybar, Wofi, Foot and Mako styles.
 - Ly TTY display/login manager; choose the Hyprland session at login. Hyprland is the sole supported window manager.
 - A custom-branded Calamares installer configuration and launch icon, plus partitioning tools. The installer configuration is experimental until tested in a VM on both UEFI and BIOS systems.
