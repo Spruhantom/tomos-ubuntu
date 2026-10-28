@@ -1,5 +1,6 @@
-# Core desktop
+# Core desktop (Sway retained as fallback)
 sway
+hyprland
 waybar
 wofi
 foot
