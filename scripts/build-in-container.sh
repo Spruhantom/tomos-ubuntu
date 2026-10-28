@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run inside the privileged Ubuntu 26.04 container launched by build.sh.
+# Run inside the privileged Ubuntu 26.10 container launched by build.sh.
 set -Eeuo pipefail
 
 BASE_ISO="${1:-/base.iso}"
@@ -7,7 +7,7 @@ PROJECT=/work
 WORK="$PROJECT/build/work"
 TREE="$WORK/iso-tree"
 ROOT="$WORK/rootfs"
-OUTPUT="$PROJECT/dist/PunkSway-26.04-amd64.iso"
+OUTPUT="$PROJECT/dist/PunkSway-26.10-amd64.iso"
 LOG="$PROJECT/build/build.log"
 
 mkdir -p "$PROJECT/build" "$PROJECT/dist"
@@ -62,7 +62,7 @@ xorriso -osirrox on -indev "$BASE_ISO" -extract / "$TREE"
 [[ -f "$TREE/.disk/info" ]] || fail "No .disk/info found."
 SOURCE_INFO="$(cat "$TREE/.disk/info")"
 printf 'Source image: %s\n' "$SOURCE_INFO"
-printf '%s' "$SOURCE_INFO" | grep -q '26\.04' || fail "Expected Ubuntu 26.04 LTS."
+printf '%s' "$SOURCE_INFO" | grep -q '26\.10' || fail "Expected Ubuntu 26.10."
 printf '%s' "$SOURCE_INFO" | grep -qi 'amd64' || fail "Expected Ubuntu Desktop amd64."
 
 echo "[2/7] Unpacking the live filesystem..."
@@ -70,7 +70,7 @@ BUILD_JOBS="${BUILD_JOBS:-$(nproc)}"
 [[ "$BUILD_JOBS" =~ ^[0-9]+$ ]] && (( BUILD_JOBS > 0 )) || BUILD_JOBS="$(nproc)"
 (( BUILD_JOBS > 8 )) && BUILD_JOBS=8
 unsquashfs -processors "$BUILD_JOBS" -d "$ROOT" "$TREE/casper/filesystem.squashfs"
-grep -qE '^VERSION_ID="?26\.04"?$' "$ROOT/usr/lib/os-release" || fail "Live filesystem is not Ubuntu 26.04."
+grep -qE '^VERSION_ID="?26\.10"?$' "$ROOT/usr/lib/os-release" || fail "Live filesystem is not Ubuntu 26.04."
 
 if [[ -L "$ROOT/etc/resolv.conf" ]]; then
     RESOLV_KIND=link; RESOLV_TARGET="$(readlink "$ROOT/etc/resolv.conf")"
@@ -101,6 +101,9 @@ printf 'shared/default-x-display-manager select ly\n' | chroot "$ROOT" debconf-s
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get update
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${PACKAGES[@]}"
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get purge -y gdm3 lightdm lightdm-gtk-greeter || true
+KERNEL_PACKAGES="$(chroot "$ROOT" dpkg-query -W -f='${binary:Package} ${Version}\\n' 'linux-image-*-generic' 2>/dev/null || true)"
+printf '%s\\n' "$KERNEL_PACKAGES"
+printf '%s\\n' "$KERNEL_PACKAGES" | grep -Eq 'linux-image-7\\.3\\.[0-9]+-[0-9]+-generic' || fail "Ubuntu 26.10 kernel 7.3 image package was not installed."
 
 echo "[4/7] Applying PunkSway configuration, Zsh/Fastfetch, and Calamares installer..."
 install -D -m 0644 "$PROJECT/config/calamares/settings.conf" "$ROOT/etc/calamares/settings.conf"
@@ -148,12 +151,12 @@ fi
 install -D -m 0644 "$PROJECT/config/punksway-quickstart.desktop" "$ROOT/usr/share/applications/punksway-quickstart.desktop"
 install -D -m 0644 "$PROJECT/QUICKSTART.txt" "$ROOT/usr/share/doc/punksway/QUICKSTART.txt"
 if [[ -f "$ROOT/usr/lib/os-release" ]]; then
-    sed -i 's/^NAME=.*/NAME="PunkSway"/; s/^PRETTY_NAME=.*/PRETTY_NAME="PunkSway 26.04 LTS (Ubuntu base)"/' "$ROOT/usr/lib/os-release"
+    sed -i 's/^NAME=.*/NAME="PunkSway"/; s/^PRETTY_NAME=.*/PRETTY_NAME="PunkSway 26.10 (Ubuntu base)"/' "$ROOT/usr/lib/os-release"
 fi
-if [[ -f "$ROOT/etc/lsb-release" ]]; then sed -i 's/^DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION="PunkSway 26.04 LTS — Blue Neon Hyprland"/' "$ROOT/etc/lsb-release"; fi
+if [[ -f "$ROOT/etc/lsb-release" ]]; then sed -i 's/^DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION="PunkSway 26.10 — Blue Neon Hyprland"/' "$ROOT/etc/lsb-release"; fi
 cat > "$ROOT/etc/issue" <<'ISSUE'
 \n\l
-PunkSway 26.04 LTS — Blue Neon Hyprland
+PunkSway 26.10 — Blue Neon Hyprland
 Ubuntu-based live environment
 ISSUE
 mkdir -p "$ROOT/etc/systemd/system/graphical.target.wants"
@@ -164,9 +167,9 @@ chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get clean
 rm -rf "$ROOT/var/lib/apt/lists"/*
 cleanup_mounts; restore_chroot_files; RESOLV_KIND=missing; POLICY_WAS_PRESENT=0; POLICY_BACKUP=""
 for cfg in "$TREE/boot/grub/grub.cfg" "$TREE/boot/grub/loopback.cfg"; do
-    if [[ -f "$cfg" ]]; then sed -i -e 's/Try or Install Ubuntu/Try or Install PunkSway/g' -e 's/Install Ubuntu/Install PunkSway/g' -e 's/Ubuntu 26\.04 LTS/PunkSway 26.04 LTS/g' "$cfg"; fi
+    if [[ -f "$cfg" ]]; then sed -i -e 's/Try or Install Ubuntu/Try or Install PunkSway/g' -e 's/Install Ubuntu/Install PunkSway/g' -e 's/Ubuntu 26\.10 LTS/PunkSway 26.10/g' "$cfg"; fi
 done
-printf '%s\n' 'PunkSway 26.04 LTS amd64 — Ubuntu-based Blue Neon Hyprland remix' > "$TREE/.disk/info"
+printf '%s\n' 'PunkSway 26.10 amd64 — Ubuntu-based Blue Neon Hyprland remix' > "$TREE/.disk/info"
 echo "[5/7] Rebuilding compressed live filesystem..."
 ORIGINAL_SQ="$TREE/casper/filesystem.squashfs"
 SQ_INFO="$(unsquashfs -s "$ORIGINAL_SQ" 2>&1 || true)"
