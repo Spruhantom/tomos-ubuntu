@@ -28,6 +28,18 @@ network-manager
 network-manager-gnome
 thunar
 
+# Calamares installer and disk tools
+calamares
+calamares-data
+parted
+gparted
+dosfstools
+btrfs-progs
+ntfs-3g
+cryptsetup
+lvm2
+rsync
+
 # Policy agent and display manager
 polkitd
 mate-polkit
