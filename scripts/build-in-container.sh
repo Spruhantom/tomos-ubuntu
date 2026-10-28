@@ -45,7 +45,7 @@ if ! command -v xorriso >/dev/null || ! command -v unsquashfs >/dev/null || ! co
         sed -i -E 's/^Components:.*/Components: main restricted universe multiverse/' /etc/apt/sources.list.d/ubuntu.sources
     fi
     apt-get update
-    apt-get install -y --no-install-recommends ca-certificates xorriso squashfs-tools rsync systemd util-linux coreutils findutils gawk python3-pil
+    apt-get install -y --no-install-recommends ca-certificates xorriso squashfs-tools rsync systemd util-linux coreutils findutils gawk python3-pil build-essential qt6-base-dev qt6-declarative-dev qmake6 dpkg-dev
 fi
 
 if [[ ! -f "$PROJECT/assets/neon-punk.png" ]]; then
@@ -97,10 +97,15 @@ while IFS= read -r line; do
     line="${line%%#*}"; line="$(printf '%s' "$line" | xargs)"
     [[ -n "$line" ]] && PACKAGES+=("$line")
 done < "$PROJECT/packages.txt"
+echo "[3/7] Building Tomphone Ubuntu package..."
+PROJECT=/work BUILD_JOBS="${BUILD_JOBS:-$(nproc)}" bash "$PROJECT/scripts/build-tomphone-deb.sh"
+install -D -m 0644 "$PROJECT/build/tomphone_0.1.0_amd64.deb" "$ROOT/tmp/tomphone_0.1.0_amd64.deb"
 echo "[3/7] Installing desktop packages..."
 printf 'shared/default-x-display-manager select ly\n' | chroot "$ROOT" debconf-set-selections
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get update
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${PACKAGES[@]}"
+chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get install -y /tmp/tomphone_0.1.0_amd64.deb
+rm -f "$ROOT/tmp/tomphone_0.1.0_amd64.deb"
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get purge -y gdm3 lightdm lightdm-gtk-greeter || true
 KERNEL_PACKAGES="$(chroot "$ROOT" dpkg-query -W -f='${binary:Package} ${Version}\n' 'linux-image-*-generic' 2>/dev/null || true)"
 printf '%s\n' "$KERNEL_PACKAGES"
