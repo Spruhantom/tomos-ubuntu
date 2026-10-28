@@ -31,6 +31,10 @@ APPS
 ----
 The Wofi launcher lists installed desktop applications. The dock shortcuts open the file manager, terminal and app launcher. The volume module opens pavucontrol.
 
+TERMINAL
+--------
+Zsh is the default shell. Interactive terminals show the custom Tom OS Fastfetch ASCII logo and system summary. Edit ~/.zshrc to customise the prompt or Fastfetch settings in ~/.config/fastfetch/config.jsonc.
+
 LIVE SESSION VS INSTALLED SYSTEM
 --------------------------------
 Ly is the configured display/login manager and presents a TTY-based session selector. Choose the Hyprland session. Automatic live-session login has been disabled because the previous LightDM-specific autologin hook does not apply to Ly. User defaults are copied from
