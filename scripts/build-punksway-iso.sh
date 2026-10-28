@@ -71,7 +71,7 @@ curl --fail --location --retry 3 --silent --show-error "$REPO_ARCHIVE" -o "$WORK
 rm -rf "$WORK/project"
 mkdir -p "$WORK/project"
 tar -xzf "$WORK/project.tar.gz" --strip-components=1 -C "$WORK/project"
-[[ -x "$WORK/project/build.sh" && -f "$WORK/project/scripts/build-in-container.sh" ]] || {
+[[ -f "$WORK/project/build.sh" && -f "$WORK/project/scripts/build-in-container.sh" ]] || {
     echo "Downloaded project archive is missing the expected build scripts." >&2
     exit 1
 }
