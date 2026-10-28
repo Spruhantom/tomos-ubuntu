@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Tom OS Neon
+Description=Tom OS neon purple and cyan boot splash
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/tomos
+ScriptFile=/usr/share/plymouth/themes/tomos/tomos.script
