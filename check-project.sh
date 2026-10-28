@@ -13,6 +13,11 @@ json.load((root / "config/waybar/config.jsonc").open(encoding="utf-8"))
 print("JSON syntax OK: config/waybar/config.jsonc")
 required = [
     "assets/render_wallpaper.py",
+    "config/calamares/settings.conf",
+    "config/calamares/modules/unpackfs.conf",
+    "config/calamares/branding/punk/branding.desc",
+    "config/calamares/branding/punk/show.html",
+    "config/punksway-installer.desktop",
     "packages.txt",
     "config/sway/config",
     "config/waybar/style.css",
