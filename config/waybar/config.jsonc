@@ -1,42 +1,20 @@
 {
   "layer": "top",
   "position": "top",
-  "height": 36,
+  "height": 34,
   "spacing": 8,
-  "margin-top": 7,
-  "margin-left": 9,
-  "margin-right": 9,
-  "modules-left": ["hyprland/workspaces"],
-  "modules-center": ["clock"],
-  "modules-right": ["network", "pulseaudio", "battery", "tray"],
+  "modules-left": ["custom/brand", "hyprland/workspaces"],
+  "modules-center": [],
+  "modules-right": ["custom/display", "pulseaudio", "battery", "clock"],
+  "custom/brand": {"format": "◉  Tom OS", "tooltip": false},
   "hyprland/workspaces": {
     "disable-scroll": true,
     "all-outputs": true,
     "format": "{name}",
-    "persistent-workspaces": { "1": [], "2": [], "3": [], "4": [], "5": [] }
+    "persistent-workspaces": {"1": [], "2": [], "3": [], "4": [], "5": []}
   },
-  "clock": {
-    "format": "TIME  {:%a %d %b  %H:%M}",
-    "tooltip-format": "{:%A, %d %B %Y}\nWeek %V"
-  },
-  "network": {
-    "format-wifi": "WIFI  {essid}",
-    "format-ethernet": "LAN  {ifname}",
-    "format-disconnected": "OFFLINE",
-    "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
-    "on-click": "nm-connection-editor"
-  },
-  "pulseaudio": {
-    "format": "VOL  {volume}%",
-    "format-muted": "MUTED",
-    "scroll-step": 5,
-    "on-click": "pavucontrol"
-  },
-  "battery": {
-    "states": { "warning": 30, "critical": 15 },
-    "format": "BAT  {capacity}%",
-    "format-charging": "CHG  {capacity}%",
-    "format-icons": ["BAT", "BAT", "BAT", "BAT", "BAT"]
-  },
-  "tray": { "icon-size": 17, "spacing": 9 }
+  "custom/display": {"format": "▣", "tooltip": "Settings / application launcher", "on-click": "wofi --show drun"},
+  "pulseaudio": {"format": "🔊 {volume}%", "format-muted": "🔇", "scroll-step": 5, "on-click": "pavucontrol"},
+  "battery": {"states": {"warning": 30, "critical": 15}, "format": "▣ {capacity}%", "format-charging": "▣ {capacity}%"},
+  "clock": {"format": "{:%a %d %b %H:%M}", "tooltip-format": "{:%A, %d %B %Y}"}
 }
