@@ -1,0 +1,1 @@
+Waybar is configured by config.jsonc and styled by style.css. The theme uses midnight blue backgrounds, cyan highlights and violet secondary accents.
