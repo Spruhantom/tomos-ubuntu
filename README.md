@@ -12,6 +12,10 @@ The image includes a custom Tom OS purple/cyan Plymouth theme. The build renders
 
 Tom OS/PunkSway now targets Ubuntu 26.10 (Stonking Stingray), whose official release ships Linux 7.3. The build installs the `linux-generic` metapackage and checks that a Linux 7.3 generic kernel image package is present before repacking the ISO. Ubuntu 26.10 is an interim release with support through July 2027, not an LTS release. The kernel shipped on the original release image was based on 7.3-rc6; normal Ubuntu archive updates are expected to provide subsequent kernel updates. See the [official Ubuntu 26.10 release notes](https://documentation.ubuntu.com/release-notes/26.10/).
 
+## Tomphone SIP softphone
+
+The build compiles the included Qt 6 Tomphone source and creates `build/tomphone_0.1.0_amd64.deb` inside the Ubuntu builder, then installs that package into the live filesystem. It adds a Tomphone application launcher and depends on Baresip plus Qt Quick modules and PulseAudio-compatible audio. Tomphone is a SIP audio-calling app, not a phone-data transfer utility. Package compilation and SIP/audio behaviour still need runtime testing in the built image.
+
 ## What's included
 
 - Hyprland/Wayland as the only supported window manager session.
@@ -21,6 +25,7 @@ Tom OS/PunkSway now targets Ubuntu 26.10 (Stonking Stingray), whose official rel
 - A custom-branded Calamares installer configuration and launch icon, plus partitioning tools. The installer configuration is experimental until tested in a VM on both UEFI and BIOS systems.
 - Zsh as the default shell, with a custom violet/cyan prompt and a Tom OS ASCII logo shown by Fastfetch on interactive terminals.
 - NetworkManager tray applet, PipeWire tools, screenshots, clipboard tools, idle locking and a quick-start guide.
+- Tomphone Qt 6 SIP softphone packaged as an Ubuntu `.deb` during the build.
 - Build scripts to customise the live filesystem and preserve the source ISO's boot setup.
 
 ## Build on Omarchy Linux
@@ -90,6 +95,8 @@ Boot the generated ISO in a virtual machine before installing it on physical har
 - `assets/render_plymouth.py`, `config/plymouth/`: Tom OS Plymouth boot splash and progress bar.
 - `config/zsh/.zshrc`: default Zsh prompt, aliases and Fastfetch startup.
 - `config/fastfetch/`: custom terminal system summary and Tom OS ASCII logo.
+- `apps/tomphone/`: Tomphone source and Ubuntu package metadata.
+- `scripts/build-tomphone-deb.sh`: builds the Tomphone `.deb` package.
 - `packages.txt`: Ubuntu packages included in the image.
 
 Ubuntu and its logos/trademarks belong to Canonical. This is an independent remix, not an official Ubuntu product. Do not redistribute the original Ubuntu ISO with this project. Configuration and original artwork are provided under the MIT License; included third-party software remains under its own licences.
