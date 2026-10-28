@@ -31,7 +31,7 @@ case "${ID:-}" in
         if [[ "${ID:-}" == debian ]]; then
             case "${VERSION_ID:-}" in
                 12|13) echo "Detected Debian ${VERSION_ID}; installing build dependencies with APT." ;;
-                *) echo "Debian ${VERSION_ID:-unknown} detected. Debian 12 and 13 are the tested targets; continuing best-effort." >&2 ;;
+                *) echo "Debian ${VERSION_ID:-unknown} detected. Debian 12 and 13 are the intended targets; continuing best-effort." >&2 ;;
             esac
         fi
         export DEBIAN_FRONTEND=noninteractive
@@ -98,7 +98,12 @@ tar -xzf "$WORK/project.tar.gz" --strip-components=1 -C "$WORK/project"
 echo "[2/4] Downloading the official Ubuntu 26.10 Desktop amd64 ISO and checksums..."
 curl --fail --location --retry 3 --silent --show-error "$UBUNTU_BASE/SHA256SUMS" -o "$WORK/SHA256SUMS"
 curl --fail --location --retry 3 --silent --show-error "$UBUNTU_BASE/$ISO_NAME" -o "$WORK/$ISO_NAME"
-checksum_line="$(awk -v name="$ISO_NAME" '$2 == name { print; count++ } END { if (count != 1) exit 1 }' "$WORK/SHA256SUMS")" || {
+checksum_line="$(awk -v name="$ISO_NAME" '{
+    filename = $2
+    sub(/^\\*/, "", filename)
+    sub(/^\\\\/, "", filename)
+    if (filename == name) { print; count++ }
+} END { if (count != 1) exit 1 }' "$WORK/SHA256SUMS")" || {
     echo "Could not find exactly one checksum entry for $ISO_NAME in the official SHA256SUMS file." >&2
     exit 1
 }
