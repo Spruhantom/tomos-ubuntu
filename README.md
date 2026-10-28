@@ -11,6 +11,7 @@
 - Tom OS-inspired purple/neon desktop based on the supplied reference: scenic neon wallpaper, slim top panel, five workspaces, translucent floating bottom app dock, rounded dark windows and coordinated colours.
 - Ly TTY display/login manager; choose the Hyprland session at login. Hyprland is the sole supported window manager.
 - A custom-branded Calamares installer configuration and launch icon, plus partitioning tools. The installer configuration is experimental until tested in a VM on both UEFI and BIOS systems.
+- Zsh as the default shell, with a custom violet/cyan prompt and a Tom OS ASCII logo shown by Fastfetch on interactive terminals.
 - NetworkManager tray applet, PipeWire tools, screenshots, clipboard tools, idle locking and a quick-start guide.
 - Build scripts to customise the live filesystem and preserve the source ISO's boot setup.
 
@@ -77,6 +78,8 @@ Boot the generated ISO in a virtual machine before installing it on physical har
 - `config/waybar/`: top panel, bottom dock and their styles.
 - `config/wofi/style.css`, `config/foot/foot.ini`, `config/mako/config`: application styling.
 - `assets/render_wallpaper.py`: wallpaper generator.
+- `config/zsh/.zshrc`: default Zsh prompt, aliases and Fastfetch startup.
+- `config/fastfetch/`: custom terminal system summary and Tom OS ASCII logo.
 - `packages.txt`: Ubuntu packages included in the image.
 
 Ubuntu and its logos/trademarks belong to Canonical. This is an independent remix, not an official Ubuntu product. Do not redistribute the original Ubuntu ISO with this project. Configuration and original artwork are provided under the MIT License; included third-party software remains under its own licences.
