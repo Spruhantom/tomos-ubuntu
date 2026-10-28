@@ -39,7 +39,15 @@ packages = [line.split('#', 1)[0].strip() for line in (root / "packages.txt").re
 packages = [line for line in packages if line]
 if len(packages) != len(set(packages)):
     raise SystemExit("Duplicate package names in packages.txt")
-print(f"package list OK: {len(packages)} packages")
+if "linux-generic" not in packages:
+    raise SystemExit("Missing linux-generic metapackage; Ubuntu 26.10 kernel updates may not be pulled in")
+build_script = (root / "build.sh").read_text()
+container_script = (root / "scripts/build-in-container.sh").read_text()
+if "ubuntu:26.10" not in build_script or "26\\.10" not in container_script:
+    raise SystemExit("Build scripts do not consistently target Ubuntu 26.10")
+if "linux-image-7\\\\.3" not in container_script:
+    raise SystemExit("Build script is missing Linux 7.3 kernel package validation")
+print(f"package list and Ubuntu 26.10 kernel requirement OK: {len(packages)} packages")
 # The current Waybar config is JSON-compatible JSONC; parse it to catch syntax errors.
 waybar_config = root / "config/waybar/config.jsonc"
 try:
