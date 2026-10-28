@@ -34,6 +34,13 @@ packages = [line for line in packages if line]
 if len(packages) != len(set(packages)):
     raise SystemExit("Duplicate package names in packages.txt")
 print(f"package list OK: {len(packages)} packages")
+# The current Waybar config is JSON-compatible JSONC; parse it to catch syntax errors.
+waybar_config = root / "config/waybar/config.jsonc"
+try:
+    json.loads(waybar_config.read_text())
+except json.JSONDecodeError as exc:
+    raise SystemExit(f"Invalid Waybar config at line {exc.lineno}, column {exc.colno}: {exc.msg}")
+print("Waybar config syntax OK")
 PYTEST
 python3 -m py_compile "$ROOT/assets/render_wallpaper.py"
 echo "Python syntax OK: assets/render_wallpaper.py"
