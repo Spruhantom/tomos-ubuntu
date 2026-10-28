@@ -8,12 +8,15 @@ STAGE="$PROJECT/build/tomphone-package-root"
 command -v qmake6 >/dev/null
 command -v dpkg-deb >/dev/null
 mkdir -p "$PROJECT/build"
+JOBS="${BUILD_JOBS:-$(nproc)}"
+if ! [[ "$JOBS" =~ ^[0-9]+$ ]] || (( JOBS < 1 )); then JOBS="$(nproc)"; fi
+(( JOBS > 8 )) && JOBS=8
 rm -rf "$APP/build" "$STAGE"
 mkdir -p "$APP/build"
 (
   cd "$APP/build"
   qmake6 "$APP/tomphone.pro"
-  make -j"${BUILD_JOBS:-2}"
+  make -j"$JOBS"
 )
 install -D -m 0755 "$APP/build/tomphone" "$STAGE/usr/bin/tomphone"
 install -D -m 0644 "$APP/share/applications/tomphone.desktop" "$STAGE/usr/share/applications/tomphone.desktop"
