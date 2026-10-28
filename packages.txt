@@ -57,7 +57,7 @@ rsync
 # Policy agent and display manager
 polkitd
 mate-polkit
-ly
+sddm
 
 # Theme and fonts
 fonts-jetbrains-mono
