@@ -46,7 +46,7 @@ echo "Base ISO: $BASE_ISO"
 echo "Scratch space: $PROJECT_DIR/build (allow about 25–35 GB free)"
 echo "The first build downloads the Ubuntu container image and packages."
 
-"${PODMAN[@]}" run --rm --privileged \
+"${PODMAN[@]}" run --rm --privileged --security-opt label=disable \
     -v "$PROJECT_DIR:/work" \
     -v "$BASE_ISO:/base.iso:ro" \
     -e "KEEP_BUILD=${KEEP_BUILD:-0}" \
