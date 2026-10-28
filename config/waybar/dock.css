@@ -1,0 +1,5 @@
+* { font-family: "Noto Sans", "Noto Color Emoji", sans-serif; font-size: 25px; min-height: 0; }
+window#waybar { background: rgba(13, 12, 35, 0.90); color: #fff; border: 1px solid rgba(135, 91, 255, 0.65); border-radius: 22px; }
+#custom-apps, #custom-files, #custom-browser, #custom-terminal, #custom-settings, #custom-music, #custom-games { padding: 4px 12px; margin: 7px 2px; border-radius: 12px; }
+#custom-apps:hover, #custom-files:hover, #custom-browser:hover, #custom-terminal:hover, #custom-settings:hover, #custom-music:hover, #custom-games:hover { background: rgba(104, 45, 224, 0.8); }
+tooltip { background: #0b0d20; border: 1px solid #6336c9; border-radius: 8px; }
