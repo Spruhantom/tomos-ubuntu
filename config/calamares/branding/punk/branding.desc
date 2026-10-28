@@ -1,0 +1,31 @@
+---
+componentName: PunkSway Installer
+welcomeStyle: sidebar
+welcomeExpandingLogo: true
+windowExpanding: true
+windowSize: 980px,620px
+style:
+  sidebarBackground: "#07111f"
+  sidebarText: "#e5faff"
+  sidebarTextSelect: "#00e5ff"
+  sidebarTextHighlight: "#00e5ff"
+  sidebarBackgroundSelect: "#102b43"
+  sidebarBackgroundHighlight: "#12334b"
+  sidebarTextHighlightSelect: "#ffffff"
+  sidebarBackgroundHighlightSelect: "#164c70"
+  sidebarTextUnselect: "#8aa5c4"
+  sidebarBackgroundUnselect: "#07111f"
+strings:
+  productName: PunkSway
+  shortProductName: PunkSway
+  version: "26.04 LTS"
+  shortVersion: "26.04"
+  bootloaderEntryName: PunkSway
+  productUrl: "https://github.com/Spruhantom/tomos-ubuntu"
+  supportUrl: "https://github.com/Spruhantom/tomos-ubuntu/issues"
+  knownIssuesUrl: "https://github.com/Spruhantom/tomos-ubuntu/issues"
+images:
+  productLogo: "logo.png"
+  productIcon: "icon.png"
+  productWelcome: "welcome.png"
+slideshow: "show.html"
