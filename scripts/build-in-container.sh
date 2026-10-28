@@ -103,7 +103,6 @@ chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-instal
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get purge -y gdm3 lightdm lightdm-gtk-greeter || true
 KERNEL_PACKAGES="$(chroot "$ROOT" dpkg-query -W -f='${binary:Package} ${Version}\n' 'linux-image-*-generic' 2>/dev/null || true)"
 printf '%s\n' "$KERNEL_PACKAGES"
-printf '%s\n' "$KERNEL_PACKAGES"
 printf '%s\n' "$KERNEL_PACKAGES" | grep -Eq 'linux-image-7\.3\.[0-9]+-[0-9]+-generic' || fail "Ubuntu 26.10 kernel 7.3 image package was not installed."
 
 echo "[4/7] Applying PunkSway configuration, Zsh/Fastfetch, and Calamares installer..."
