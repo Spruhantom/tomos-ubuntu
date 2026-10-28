@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
-for script in "$ROOT/build.sh" "$ROOT/scripts/build-in-container.sh" "$ROOT/scripts/build-tomphone-deb.sh" "$ROOT/scripts/install-tomphone.sh" "$ROOT/scripts/punksway-polkit-agent.sh" "$ROOT/scripts/install-caelestia.sh"; do
+for script in "$ROOT/build.sh" "$ROOT/scripts/build-in-container.sh" "$ROOT/scripts/build-tomphone-deb.sh" "$ROOT/scripts/install-tomphone.sh" "$ROOT/scripts/build-punksway-iso.sh" "$ROOT/scripts/punksway-polkit-agent.sh" "$ROOT/scripts/install-caelestia.sh"; do
     bash -n "$script"
     echo "shell syntax OK: ${script#"$ROOT"/}"
 done
@@ -28,6 +28,7 @@ required = [
     "apps/tomphone/share/icons/hicolor/scalable/apps/tomphone.svg",
     "scripts/build-tomphone-deb.sh",
     "scripts/install-tomphone.sh",
+    "scripts/build-punksway-iso.sh",
     "config/plymouth/tomos.plymouth",
     "config/plymouth/tomos.script",
     "config/calamares/settings.conf",
