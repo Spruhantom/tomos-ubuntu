@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=PunkSway Quickstart
+Comment=Keyboard shortcuts and desktop help
+Exec=foot -e less /usr/share/doc/punksway/QUICKSTART.txt
+Icon=utilities-terminal
+Terminal=false
+Categories=Utility;
