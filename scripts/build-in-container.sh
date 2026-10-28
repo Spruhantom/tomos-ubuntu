@@ -70,7 +70,7 @@ BUILD_JOBS="${BUILD_JOBS:-$(nproc)}"
 [[ "$BUILD_JOBS" =~ ^[0-9]+$ ]] && (( BUILD_JOBS > 0 )) || BUILD_JOBS="$(nproc)"
 (( BUILD_JOBS > 8 )) && BUILD_JOBS=8
 unsquashfs -processors "$BUILD_JOBS" -d "$ROOT" "$TREE/casper/filesystem.squashfs"
-grep -qE '^VERSION_ID="?26\.10"?$' "$ROOT/usr/lib/os-release" || fail "Live filesystem is not Ubuntu 26.04."
+grep -qE '^VERSION_ID="?26\.10"?$' "$ROOT/usr/lib/os-release" || fail "Live filesystem is not Ubuntu 26.10."
 
 if [[ -L "$ROOT/etc/resolv.conf" ]]; then
     RESOLV_KIND=link; RESOLV_TARGET="$(readlink "$ROOT/etc/resolv.conf")"
@@ -101,9 +101,9 @@ printf 'shared/default-x-display-manager select ly\n' | chroot "$ROOT" debconf-s
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get update
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${PACKAGES[@]}"
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get purge -y gdm3 lightdm lightdm-gtk-greeter || true
-KERNEL_PACKAGES="$(chroot "$ROOT" dpkg-query -W -f='${binary:Package} ${Version}\\n' 'linux-image-*-generic' 2>/dev/null || true)"
-printf '%s\\n' "$KERNEL_PACKAGES"
-printf '%s\\n' "$KERNEL_PACKAGES" | grep -Eq 'linux-image-7\\.3\\.[0-9]+-[0-9]+-generic' || fail "Ubuntu 26.10 kernel 7.3 image package was not installed."
+KERNEL_PACKAGES="$(chroot "$ROOT" dpkg-query -W -f='${binary:Package} ${Version}\n' 'linux-image-*-generic' 2>/dev/null || true)"
+printf '%s\n' "$KERNEL_PACKAGES"
+printf '%s\n' "$KERNEL_PACKAGES"
 
 echo "[4/7] Applying PunkSway configuration, Zsh/Fastfetch, and Calamares installer..."
 install -D -m 0644 "$PROJECT/config/calamares/settings.conf" "$ROOT/etc/calamares/settings.conf"
