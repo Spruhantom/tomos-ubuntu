@@ -129,9 +129,28 @@ OUTPUT="$WORK/project/dist/PunkSway-26.10-amd64.iso"
     exit 1
 }
 
-echo "[4/4] Build finished."
-echo "ISO:      $OUTPUT"
-echo "Checksum: $OUTPUT.sha256"
+echo "[4/4] Copying the finished ISO to Downloads..."
+# sudo runs this script as root; prefer the original desktop user's home directory.
+if [[ -n "${SUDO_USER:-}" ]] && getent passwd "$SUDO_USER" >/dev/null; then
+    DOWNLOADS_DIR="$(getent passwd "$SUDO_USER" | cut -d: -f6)/Downloads"
+    DOWNLOAD_OWNER="$SUDO_USER"
+else
+    DOWNLOADS_DIR="${HOME:-/root}/Downloads"
+    DOWNLOAD_OWNER=""
+fi
+mkdir -p "$DOWNLOADS_DIR"
+cp --reflink=auto "$OUTPUT" "$DOWNLOADS_DIR/PunkSway-26.10-amd64.iso"
+cp "$OUTPUT.sha256" "$DOWNLOADS_DIR/PunkSway-26.10-amd64.iso.sha256"
+if [[ -n "$DOWNLOAD_OWNER" ]]; then
+    chown "$DOWNLOAD_OWNER":"$(id -gn "$DOWNLOAD_OWNER")" \
+        "$DOWNLOADS_DIR/PunkSway-26.10-amd64.iso" \
+        "$DOWNLOADS_DIR/PunkSway-26.10-amd64.iso.sha256"
+fi
+
+echo "Build finished."
+echo "ISO:      $DOWNLOADS_DIR/PunkSway-26.10-amd64.iso"
+echo "Checksum: $DOWNLOADS_DIR/PunkSway-26.10-amd64.iso.sha256"
+echo "Build copy: $OUTPUT"
 echo
 echo "This creates a bootable ISO; it does not install or replace the OS on this computer."
 echo "Test the ISO in a virtual machine before installing it on hardware."
