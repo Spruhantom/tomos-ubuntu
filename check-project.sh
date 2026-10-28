@@ -35,4 +35,10 @@ if len(packages) != len(set(packages)):
     raise SystemExit("Duplicate package names in packages.txt")
 print(f"package list OK: {len(packages)} packages")
 PYTEST
-file "$ROOT/assets/neon-punk.png"
+python3 -m py_compile "$ROOT/assets/render_wallpaper.py"
+echo "Python syntax OK: assets/render_wallpaper.py"
+if [[ -f "$ROOT/assets/neon-punk.png" ]]; then
+    file "$ROOT/assets/neon-punk.png"
+else
+    echo "Wallpaper PNG not present yet; build.sh generates it before building the ISO."
+fi
