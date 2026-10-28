@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Host-side entrypoint. Run this on Omarchy Linux with Podman installed.
+# Host-side entrypoint. Run this on Fedora, Debian/Ubuntu, or Arch-based Linux with Podman installed.
 set -Eeuo pipefail
 
 PROJECT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -7,7 +7,7 @@ BASE_ISO="${1:-}"
 
 usage() {
     cat <<'USAGE'
-PunkSway ISO builder (Omarchy Linux host)
+PunkSway ISO builder (Fedora, Debian/Ubuntu, or Arch-based Linux host)
 
 Usage:
   ./build.sh /path/to/ubuntu-26.10-desktop-amd64.iso
@@ -24,7 +24,7 @@ if [[ -z "$BASE_ISO" || "$BASE_ISO" == "-h" || "$BASE_ISO" == "--help" ]]; then 
 [[ -f "$BASE_ISO" ]] || { echo "Base ISO not found: $BASE_ISO" >&2; exit 2; }
 BASE_ISO="$(realpath "$BASE_ISO")"
 command -v podman >/dev/null 2>&1 || {
-    echo "Podman is required on Omarchy Linux. Install it with: sudo pacman -S podman" >&2
+    echo "Podman is required. Install it using your host package manager (Fedora: sudo dnf install podman; Debian/Ubuntu: sudo apt install podman; Arch: sudo pacman -Syu podman)." >&2
     exit 2
 }
 
@@ -41,7 +41,7 @@ else
 fi
 
 mkdir -p "$PROJECT_DIR/build" "$PROJECT_DIR/dist"
-echo "PunkSway builder: Omarchy Linux host → Ubuntu 26.10 container"
+echo "PunkSway builder: Linux host → Ubuntu 26.10 container"
 echo "Base ISO: $BASE_ISO"
 echo "Scratch space: $PROJECT_DIR/build (allow about 25–35 GB free)"
 echo "The first build downloads the Ubuntu container image and packages."
