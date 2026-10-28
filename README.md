@@ -40,7 +40,7 @@ The build compiles the included Qt 6 Tomphone source and creates `build/tomphone
 
 ## One-line full-project ISO build
 
-On an x86_64 Ubuntu/Debian or Arch-based Linux host, this command downloads the project and the official Ubuntu 26.10 Desktop amd64 ISO, verifies the ISO checksum, installs Podman, and builds the complete PunkSway ISO:
+On an x86_64 Ubuntu/Debian or Arch-based Linux host, this command downloads the project and the official Ubuntu 26.10 Desktop amd64 ISO, verifies the ISO checksum, and builds the complete PunkSway ISO. On Ubuntu/Debian it installs Podman; on Arch-based hosts, install Podman first with `sudo pacman -Syu podman` to avoid an unsafe partial package upgrade:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Spruhantom/tomos-ubuntu/main/scripts/build-punksway-iso.sh | sudo bash
