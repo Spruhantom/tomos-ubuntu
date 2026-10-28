@@ -1,4 +1,5 @@
-# Core desktop
+# Core desktop and Ubuntu 26.10 kernel metapackage
+linux-generic
 hyprland
 hyprlock
 hypridle
