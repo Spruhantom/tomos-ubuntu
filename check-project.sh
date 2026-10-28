@@ -25,6 +25,7 @@ required = [
     "config/zsh/.zshrc",
     "config/fastfetch/config.jsonc",
     "config/fastfetch/fastfetch-logo.txt",
+    "config/caelestia/shell.json",
     "config/hypr/README.md",
     "scripts/install-caelestia.sh",
     "config/punksway-quickstart.desktop",
@@ -57,7 +58,12 @@ except json.JSONDecodeError as exc:
     raise SystemExit(f"Invalid Fastfetch config at line {exc.lineno}, column {exc.colno}: {exc.msg}")
 if not (root / "config/fastfetch/fastfetch-logo.txt").read_text().strip():
     raise SystemExit("Fastfetch ASCII logo is empty")
-print("Waybar top-panel/dock and Fastfetch JSON syntax OK")
+caelestia_config = root / "config/caelestia/shell.json"
+try:
+    json.loads(caelestia_config.read_text())
+except json.JSONDecodeError as exc:
+    raise SystemExit(f"Invalid Caelestia config at line {exc.lineno}, column {exc.colno}: {exc.msg}")
+print("Waybar, Fastfetch and Caelestia JSON syntax OK")
 PYTEST
 python3 -m py_compile "$ROOT/assets/render_wallpaper.py"
 echo "Python syntax OK: assets/render_wallpaper.py"
