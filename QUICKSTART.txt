@@ -2,7 +2,7 @@ PUNKSWAY — QUICKSTART
 =====================
 
 PunkHyprland is an Ubuntu-based live desktop project targeting Hyprland with Caelestia Shell. Hyprland is the only supported window manager session.
-The default look follows the supplied Tom OS reference: violet neon wallpaper, dark top panel, five workspaces and a rounded floating app dock. Wofi provides application search; the full Omarchy quick-settings shell is not included.
+The default look follows the supplied Tom OS reference: neon blue/cyan and violet wallpaper, translucent Caelestia panels, five workspaces and rounded surfaces. If Caelestia is installed, the wallpaper drives its dynamic colour scheme; otherwise Waybar/Wofi provide a fallback. Caelestia is not prebuilt into this ISO yet.
 
 KEYBOARD SHORTCUTS
 ------------------
