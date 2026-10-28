@@ -1,0 +1,47 @@
+# Tom OS neon boot splash. Progress is driven by Plymouth boot progress callbacks.
+Window.SetBackgroundTopColor (0.005, 0.005, 0.02);
+Window.SetBackgroundBottomColor (0.005, 0.005, 0.02);
+
+splash_image = Image("tomos-splash.png");
+splash_sprite = Sprite(splash_image);
+splash_sprite.SetPosition(Window.GetWidth() / 2 - splash_image.GetWidth() / 2,
+                          Window.GetHeight() / 2 - splash_image.GetHeight() / 2, 0);
+
+track_image = Image("tomos-progress-track.png");
+track_sprite = Sprite(track_image);
+track_x = Window.GetWidth() / 2 - track_image.GetWidth() / 2;
+track_y = Window.GetHeight() * 0.80;
+track_sprite.SetPosition(track_x, track_y, 10);
+
+fill_image = Image("tomos-progress-fill.png");
+progress_sprite = Sprite(fill_image.Scale(1, 12));
+progress = 0.0;
+
+fun update_progress (duration, value) {
+    if (value < 0.0) value = 0.0;
+    if (value > 1.0) value = 1.0;
+    progress = value;
+    width = Math.Int(754 * progress);
+    if (width < 1) width = 1;
+    progress_sprite.SetImage(fill_image.Scale(width, 12));
+    progress_sprite.SetPosition(track_x + 3, track_y + 3, 11);
+}
+
+fun refresh_callback () {
+    # Keep the progress visible if Plymouth has not received a new callback yet.
+    if (progress < 0.03) {
+        pulse = Math.Int(120 + 70 * Math.Sin(Plymouth.GetTime() * 3));
+        progress_sprite.SetOpacity(pulse / 190.0);
+    } else {
+        progress_sprite.SetOpacity(1.0);
+    }
+}
+
+progress_sprite.SetOpacity(0.85);
+Plymouth.SetBootProgressFunction(update_progress);
+Plymouth.SetRefreshFunction(refresh_callback);
+Plymouth.SetQuitFunction(fun () {
+    splash_sprite.SetOpacity(0.0);
+    track_sprite.SetOpacity(0.0);
+    progress_sprite.SetOpacity(0.0);
+});
