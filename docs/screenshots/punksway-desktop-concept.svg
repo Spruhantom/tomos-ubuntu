@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">PunkSway 26.10 desktop concept render</title>
+  <desc id="desc">Illustrative blue neon and violet Hyprland desktop with a top Waybar panel, abstract neon wallpaper, and a floating application dock. Concept artwork, not a captured screenshot.</desc>
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#080c20"/><stop offset=".48" stop-color="#211044"/><stop offset="1" stop-color="#061b30"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#00d9ff" stop-opacity=".8"/><stop offset="1" stop-color="#00d9ff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="mount" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#8d40ff" stop-opacity=".9"/><stop offset="1" stop-color="#00d9ff" stop-opacity=".45"/></linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#17182b" stop-opacity=".94"/><stop offset="1" stop-color="#101322" stop-opacity=".88"/></linearGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="55"/></filter>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#000" flood-opacity=".45"/></filter>
+  </defs>
+  <rect width="1440" height="900" fill="url(#wall)"/>
+  <circle cx="280" cy="270" r="240" fill="url(#glow)" filter="url(#blur)"/>
+  <circle cx="1120" cy="580" r="270" fill="#702bff" opacity=".32" filter="url(#blur)"/>
+  <path d="M0 690 L240 460 390 555 630 300 850 510 1070 250 1440 590 V900 H0Z" fill="#11152e" opacity=".9"/>
+  <path d="M0 760 L250 560 390 640 650 410 850 600 1090 360 1440 670 V900 H0Z" fill="url(#mount)" opacity=".6"/>
+  <path d="M0 810 L300 660 470 720 720 500 940 690 1200 480 1440 730 V900 H0Z" fill="#07101f" opacity=".85"/>
+  <g fill="none" stroke="#00d9ff" stroke-opacity=".65" stroke-width="2">
+    <path d="M-20 730 L260 520 395 603 645 350 850 555 1070 305 1460 635"/>
+    <path d="M-20 750 L260 540 395 623 645 370 850 575 1070 325 1460 655" stroke-opacity=".22"/>
+    <path d="M90 900 L350 665 M240 900 L460 705 M1130 900 L1220 630 M1290 900 L1300 670"/>
+  </g>
+  <g font-family="Inter,Segoe UI,sans-serif" fill="#f6f3ff">
+    <text x="90" y="370" font-size="18" letter-spacing="8" fill="#00d9ff">BLUE NEON • HYPRLAND</text>
+    <text x="82" y="438" font-size="72" font-weight="800" letter-spacing="-2">PUNK<tspan fill="#00d9ff">SWAY</tspan></text>
+    <text x="92" y="478" font-size="20" fill="#c7c2e8">26.10  /  TOM OS CONCEPT DESKTOP</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="28" y="22" width="1384" height="46" rx="15" fill="url(#panel)" stroke="#7664a8" stroke-opacity=".45"/>
+    <circle cx="52" cy="45" r="6" fill="#00d9ff"/>
+    <text x="68" y="51" font-family="Inter,Segoe UI,sans-serif" font-size="16" font-weight="700" fill="#f5f2ff">Tom OS</text>
+    <g font-family="Inter,Segoe UI,sans-serif" font-size="14" text-anchor="middle">
+      <rect x="190" y="30" width="38" height="30" rx="8" fill="#00d9ff" fill-opacity=".22" stroke="#00d9ff" stroke-opacity=".7"/><text x="209" y="50" fill="#00e5ff">1</text>
+      <rect x="236" y="30" width="38" height="30" rx="8" fill="#ffffff" fill-opacity=".05"/><text x="255" y="50" fill="#c9c4df">2</text>
+      <rect x="282" y="30" width="38" height="30" rx="8" fill="#ffffff" fill-opacity=".05"/><text x="301" y="50" fill="#c9c4df">3</text>
+      <rect x="328" y="30" width="38" height="30" rx="8" fill="#ffffff" fill-opacity=".05"/><text x="347" y="50" fill="#c9c4df">4</text>
+      <rect x="374" y="30" width="38" height="30" rx="8" fill="#ffffff" fill-opacity=".05"/><text x="393" y="50" fill="#c9c4df">5</text>
+    </g>
+    <text x="1170" y="50" font-family="Inter,Segoe UI,sans-serif" font-size="15" fill="#dcd8f0">◖  Audio   ▣  Battery  100%</text>
+    <text x="1358" y="50" font-family="Inter,Segoe UI,sans-serif" font-size="15" text-anchor="end" fill="#00d9ff">19:28</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="438" y="798" width="564" height="76" rx="23" fill="url(#panel)" stroke="#8b6be7" stroke-opacity=".65"/>
+    <g font-family="Inter,Segoe UI,sans-serif" text-anchor="middle" font-size="26">
+      <g transform="translate(475 815)"><rect width="48" height="43" rx="12" fill="#00d9ff" fill-opacity=".18"/><text x="24" y="29" fill="#00d9ff">⠿</text></g>
+      <g transform="translate(548 815)"><rect width="48" height="43" rx="12" fill="#8d40ff" fill-opacity=".2"/><text x="24" y="29" fill="#e0d5ff">▣</text></g>
+      <g transform="translate(621 815)"><rect width="48" height="43" rx="12" fill="#00d9ff" fill-opacity=".14"/><text x="24" y="29" fill="#9af2ff">⌘</text></g>
+      <g transform="translate(694 815)"><rect width="48" height="43" rx="12" fill="#8d40ff" fill-opacity=".2"/><text x="24" y="29" fill="#d4baff">▸_</text></g>
+      <g transform="translate(767 815)"><rect width="48" height="43" rx="12" fill="#00d9ff" fill-opacity=".14"/><text x="24" y="29" fill="#9af2ff">⚙</text></g>
+      <g transform="translate(840 815)"><rect width="48" height="43" rx="12" fill="#8d40ff" fill-opacity=".2"/><text x="24" y="29" fill="#d4baff">♫</text></g>
+      <g transform="translate(913 815)"><rect width="48" height="43" rx="12" fill="#00d9ff" fill-opacity=".14"/><text x="24" y="29" fill="#9af2ff">◈</text></g>
+    </g>
+  </g>
+  <text x="1410" y="886" text-anchor="end" font-family="Inter,Segoe UI,sans-serif" font-size="12" fill="#c8c3e4" opacity=".8">CONCEPT RENDER • NOT A LIVE SCREENSHOT</text>
+</svg>
