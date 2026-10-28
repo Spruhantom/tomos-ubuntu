@@ -1,0 +1,53 @@
+PUNKSWAY — QUICKSTART
+=====================
+
+PunkSway is an Ubuntu-based live desktop using the Sway Wayland compositor.
+The default look is midnight blue, cyan neon and electric violet.
+
+KEYBOARD SHORTCUTS
+------------------
+Super + Enter       Open Foot terminal
+Super + D           Open the app launcher
+Super + Space       Open the app launcher
+Super + Q           Close focused window
+Super + F           Toggle fullscreen
+Super + Shift + Space  Toggle floating window
+Super + H/J/K/L     Move focus left/down/up/right
+Super + Shift + H/J/K/L  Move focused window
+Super + 1–0         Switch workspace 1–10
+Super + Shift + 1–0 Move window to workspace 1–10
+Super + Tab         Switch to previous workspace
+Super + R           Resize mode (H/J/K/L, Enter/Esc to leave)
+Super + Shift + L   Lock screen
+Super + Shift + E   Session power menu
+Print               Select a region for a screenshot
+
+AUDIO / BRIGHTNESS
+------------------
+Volume keys         Change volume or mute
+Brightness keys     Change display brightness (hardware permitting)
+
+APPS
+----
+The app launcher lists installed desktop applications. Waybar network settings
+open the NetworkManager connection editor; the volume module opens pavucontrol.
+
+LIVE SESSION VS INSTALLED SYSTEM
+--------------------------------
+The live ISO autologs into the temporary ubuntu user. The autologin is enabled
+only when the kernel command line contains boot=casper; an installed system
+uses a regular login screen and defaults to Sway. User defaults are copied from
+/etc/skel during account creation.
+
+INSTALLING
+----------
+The ISO is based on Ubuntu 26.04 LTS Desktop and retains the Ubuntu installer
+from the source image. Test in a virtual machine first. Back up important files
+before installing an operating system to a physical disk.
+
+BUILDING
+--------
+On Omarchy Linux install Podman with pacman, then run:
+  ./build.sh /path/to/ubuntu-26.04-desktop-amd64.iso
+
+The base image should be the official Ubuntu 26.04 LTS Desktop amd64 ISO.
