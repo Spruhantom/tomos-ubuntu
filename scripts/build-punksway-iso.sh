@@ -82,7 +82,7 @@ fi
 echo "PunkSway full-project ISO build"
 echo "Work directory: $WORK"
 echo "Free space: $((available_kb / 1024 / 1024)) GiB"
-echo "This downloads a multi-gigabyte Ubuntu ISO and can take a while."
+echo "The official Ubuntu ISO will be reused when it already exists and passes checksum verification."
 
 echo "[1/4] Downloading the project source..."
 curl --fail --location --retry 3 --silent --show-error "$REPO_ARCHIVE" -o "$WORK/project.tar.gz"
@@ -95,9 +95,8 @@ tar -xzf "$WORK/project.tar.gz" --strip-components=1 -C "$WORK/project"
     exit 1
 }
 
-echo "[2/4] Downloading the official Ubuntu 26.10 Desktop amd64 ISO and checksums..."
+echo "[2/4] Checking for a cached Ubuntu 26.10 Desktop amd64 ISO..."
 curl --fail --location --retry 3 --silent --show-error "$UBUNTU_BASE/SHA256SUMS" -o "$WORK/SHA256SUMS"
-curl --fail --location --retry 3 --progress-bar --show-error "$UBUNTU_BASE/$ISO_NAME" -o "$WORK/$ISO_NAME"
 checksum_line="$(awk -v name="$ISO_NAME" '{
     filename = $2
     sub(/^[*]/, "", filename)
@@ -106,7 +105,18 @@ checksum_line="$(awk -v name="$ISO_NAME" '{
     echo "Could not find exactly one checksum entry for $ISO_NAME in the official SHA256SUMS file." >&2
     exit 1
 }
-printf '%s\n' "$checksum_line" | (cd "$WORK" && sha256sum --check -)
+if [[ -s "$WORK/$ISO_NAME" ]] && printf '%s\n' "$checksum_line" | (cd "$WORK" && sha256sum --check --status -); then
+    echo "Cached ISO found and checksum verified; skipping download."
+else
+    if [[ -e "$WORK/$ISO_NAME" ]]; then
+        echo "Cached ISO is missing or failed checksum verification; downloading a fresh copy."
+        rm -f "$WORK/$ISO_NAME"
+    else
+        echo "No cached ISO found; downloading it now."
+    fi
+    curl --fail --location --retry 3 --progress-bar --show-error "$UBUNTU_BASE/$ISO_NAME" -o "$WORK/$ISO_NAME"
+    printf '%s\n' "$checksum_line" | (cd "$WORK" && sha256sum --check -)
+fi
 
 echo "[3/4] Building the complete PunkSway ISO inside Ubuntu 26.10..."
 chmod -R u+rwX "$WORK/project"
