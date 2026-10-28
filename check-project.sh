@@ -22,6 +22,9 @@ required = [
     "config/hypr/hyprpaper.conf",
     "config/waybar/dock.jsonc",
     "config/waybar/dock.css",
+    "config/zsh/.zshrc",
+    "config/fastfetch/config.jsonc",
+    "config/fastfetch/fastfetch-logo.txt",
     "config/hypr/README.md",
     "scripts/install-caelestia.sh",
     "config/punksway-quickstart.desktop",
@@ -47,7 +50,14 @@ try:
     json.loads(dock_config.read_text())
 except json.JSONDecodeError as exc:
     raise SystemExit(f"Invalid Waybar dock config at line {exc.lineno}, column {exc.colno}: {exc.msg}")
-print("Waybar top-panel and dock JSON syntax OK")
+fastfetch_config = root / "config/fastfetch/config.jsonc"
+try:
+    json.loads(fastfetch_config.read_text())
+except json.JSONDecodeError as exc:
+    raise SystemExit(f"Invalid Fastfetch config at line {exc.lineno}, column {exc.colno}: {exc.msg}")
+if not (root / "config/fastfetch/fastfetch-logo.txt").read_text().strip():
+    raise SystemExit("Fastfetch ASCII logo is empty")
+print("Waybar top-panel/dock and Fastfetch JSON syntax OK")
 PYTEST
 python3 -m py_compile "$ROOT/assets/render_wallpaper.py"
 echo "Python syntax OK: assets/render_wallpaper.py"
