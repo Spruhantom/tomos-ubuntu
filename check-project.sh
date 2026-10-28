@@ -18,6 +18,8 @@ required = [
     "config/punksway-installer.desktop",
     "packages.txt",
     "config/hypr/hyprland.conf",
+    "config/hypr/hypridle.conf",
+    "config/hypr/hyprpaper.conf",
     "config/hypr/README.md",
     "scripts/install-caelestia.sh",
     "config/punksway-quickstart.desktop",
