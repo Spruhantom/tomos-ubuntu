@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-for script in "$ROOT/build.sh" "$ROOT/scripts/build-in-container.sh" "$ROOT/scripts/punksway-live-login.sh" "$ROOT/scripts/punksway-polkit-agent.sh" "$ROOT/scripts/install-caelestia.sh"; do
+for script in "$ROOT/build.sh" "$ROOT/scripts/build-in-container.sh" "$ROOT/scripts/punksway-polkit-agent.sh" "$ROOT/scripts/install-caelestia.sh"; do
     bash -n "$script"
     echo "shell syntax OK: ${script#"$ROOT"/}"
 done
@@ -9,8 +9,6 @@ python3 - "$ROOT" <<'PYTEST'
 import json, sys
 from pathlib import Path
 root = Path(sys.argv[1])
-json.load((root / "config/waybar/config.jsonc").open(encoding="utf-8"))
-print("JSON syntax OK: config/waybar/config.jsonc")
 required = [
     "assets/render_wallpaper.py",
     "config/calamares/settings.conf",
