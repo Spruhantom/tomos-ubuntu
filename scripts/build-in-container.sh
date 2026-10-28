@@ -106,12 +106,24 @@ mount -t proc proc "$ROOT/proc"; mount -t sysfs sysfs "$ROOT/sys"; mount -t tmpf
 # It is not mounted as an APT repository in this chroot, so disable those entries
 # before updating package indexes. Keep the network repositories intact.
 if [[ -f "$ROOT/etc/apt/sources.list" ]]; then
-    sed -i -E '/^[[:space:]]*deb[[:space:]]+cdrom:/Id' "$ROOT/etc/apt/sources.list"
+    sed -i -E '/^[[:space:]]*deb(-src)?[[:space:]].*(cdrom:|file:\/\/cdrom|file:\/cdrom)/Id' "$ROOT/etc/apt/sources.list"
 fi
 if [[ -d "$ROOT/etc/apt/sources.list.d" ]]; then
     while IFS= read -r -d '' apt_list; do
-        sed -i -E '/^[[:space:]]*deb[[:space:]]+cdrom:/Id' "$apt_list"
+        sed -i -E '/^[[:space:]]*deb(-src)?[[:space:]].*(cdrom:|file:\/\/cdrom|file:\/cdrom)/Id' "$apt_list"
     done < <(find "$ROOT/etc/apt/sources.list.d" -maxdepth 1 -type f -name '*.list' -print0)
+    # Ubuntu 26.10 may store the installer CD-ROM source in Deb822 .sources
+    # format (URIs: file:/cdrom), which cannot be removed by editing .list files.
+    while IFS= read -r -d '' apt_sources; do
+        if grep -qE '^[[:space:]]*URIs:[[:space:]].*file:(//)?/cdrom' "$apt_sources"; then
+            echo "Disabling installer CD-ROM source: ${apt_sources#"$ROOT"}"
+            awk 'BEGIN { RS=""; ORS="\\n\\n" }
+                /(^|\\n)[[:space:]]*URIs:[[:space:]].*file:(\\/\\/)?\\/cdrom/ { next }
+                { print }' "$apt_sources" > "$apt_sources.tmp"
+            cat "$apt_sources.tmp" > "$apt_sources"
+            rm -f "$apt_sources.tmp"
+        fi
+    done < <(find "$ROOT/etc/apt/sources.list.d" -maxdepth 1 -type f -name '*.sources' -print0)
 fi
 if [[ -f "$ROOT/etc/apt/sources.list.d/ubuntu.sources" ]]; then
     sed -i -E 's/^Components:.*/Components: main restricted universe multiverse/' "$ROOT/etc/apt/sources.list.d/ubuntu.sources"
@@ -125,9 +137,9 @@ echo "[3/8] Building Tomphone Ubuntu package..."
 PROJECT=/work BUILD_JOBS="${BUILD_JOBS:-$(nproc)}" bash "$PROJECT/scripts/build-tomphone-deb.sh"
 install -D -m 0644 "$PROJECT/build/tomphone_0.1.0_amd64.deb" "$ROOT/tmp/tomphone_0.1.0_amd64.deb"
 echo "[4/8] Installing desktop packages..."
-printf 'shared/default-x-display-manager select ly\n' | chroot "$ROOT" debconf-set-selections
+printf 'shared shared/default-x-display-manager select ly\n' | chroot "$ROOT" debconf-set-selections
 if ! chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Retries=3 update; then
-    fail "APT update failed inside the live filesystem. The local /cdrom source has been disabled; inspect the remaining repository errors above for network or mirror issues."
+    fail "APT update failed inside the live filesystem. Installer CD-ROM sources have been removed; inspect the remaining repository errors above for network or mirror issues."
 fi
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${PACKAGES[@]}"
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get install -y /tmp/tomphone_0.1.0_amd64.deb
