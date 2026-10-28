@@ -12,6 +12,16 @@ The image includes a custom Tom OS purple/cyan Plymouth theme. The build renders
 
 Tom OS/PunkSway now targets Ubuntu 26.10 (Stonking Stingray), whose official release ships Linux 7.3. The build installs the `linux-generic` metapackage and checks that a Linux 7.3 generic kernel image package is present before repacking the ISO. Ubuntu 26.10 is an interim release with support through July 2027, not an LTS release. The kernel shipped on the original release image was based on 7.3-rc6; normal Ubuntu archive updates are expected to provide subsequent kernel updates. See the [official Ubuntu 26.10 release notes](https://documentation.ubuntu.com/release-notes/26.10/).
 
+## Install Tomphone on Ubuntu
+
+On Ubuntu amd64, run this one-line command to download the source, build the Debian package, install its dependencies and install Tomphone:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Spruhantom/tomos-ubuntu/main/scripts/install-tomphone.sh | sudo bash
+```
+
+The installer uses the repository's current `main` branch and requires an internet connection. It installs build tools and Baresip dependencies and compiles the package locally; this is not a prebuilt binary download. Tomphone is a SIP audio-calling application, not a phone-data transfer tool. Review `scripts/install-tomphone.sh` before running a remote script with administrator privileges.
+
 ## Tomphone SIP softphone
 
 The build compiles the included Qt 6 Tomphone source and creates `build/tomphone_0.1.0_amd64.deb` inside the Ubuntu builder, then installs that package into the live filesystem. It adds a Tomphone application launcher and depends on Baresip plus Qt Quick modules and PulseAudio-compatible audio. Tomphone is a SIP audio-calling app, not a phone-data transfer utility. Package compilation and SIP/audio behaviour still need runtime testing in the built image.
