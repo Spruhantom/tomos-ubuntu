@@ -1,4 +1,7 @@
 # Core desktop and Ubuntu 26.10 kernel metapackage
+plymouth
+plymouth-themes
+plymouth-theme-script
 linux-generic
 hyprland
 hyprlock
