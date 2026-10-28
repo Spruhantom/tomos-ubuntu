@@ -159,7 +159,7 @@ case "$SQ_COMP" in gzip|lzo|lz4|xz|zstd|lzma) ;; *) SQ_COMP=xz ;; esac
 rm -f "$ORIGINAL_SQ"
 mksquashfs "$ROOT" "$ORIGINAL_SQ" -comp "$SQ_COMP" -b "$SQ_BLOCK" -noappend -processors "$BUILD_JOBS"
 du -sx --block-size=1 "$ROOT" | awk '{print $1}' > "$TREE/casper/filesystem.size"
-(cd "$TREE"; find . -type f ! -name md5sum.txt -print0 | sort -z | xargs -0 -r md5sum)
+(cd "$TREE"; find . -type f ! -name md5sum.txt -print0 | sort -z | xargs -0 -r md5sum > md5sum.txt)
 rm -rf "$ROOT"
 echo "[6/7] Rebuilding bootable ISO..."
 rm -f "$OUTPUT"
