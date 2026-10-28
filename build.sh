@@ -10,13 +10,13 @@ usage() {
 PunkSway ISO builder (Omarchy Linux host)
 
 Usage:
-  ./build.sh /path/to/ubuntu-26.04-desktop-amd64.iso
+  ./build.sh /path/to/ubuntu-26.10-desktop-amd64.iso
 
 Optional:
-  KEEP_BUILD=1 ./build.sh /path/to/ubuntu-26.04-desktop-amd64.iso
+  KEEP_BUILD=1 ./build.sh /path/to/ubuntu-26.10-desktop-amd64.iso
 
-The ISO build runs inside an Ubuntu 26.04 Podman container. The original ISO is
-not modified. Output: dist/PunkSway-26.04-amd64.iso
+The ISO build runs inside an Ubuntu 26.10 Podman container. The original ISO is
+not modified. Output: dist/PunkSway-26.10-amd64.iso
 USAGE
 }
 
@@ -41,7 +41,7 @@ else
 fi
 
 mkdir -p "$PROJECT_DIR/build" "$PROJECT_DIR/dist"
-echo "PunkSway builder: Omarchy Linux host → Ubuntu 26.04 container"
+echo "PunkSway builder: Omarchy Linux host → Ubuntu 26.10 container"
 echo "Base ISO: $BASE_ISO"
 echo "Scratch space: $PROJECT_DIR/build (allow about 25–35 GB free)"
 echo "The first build downloads the Ubuntu container image and packages."
@@ -52,17 +52,17 @@ echo "The first build downloads the Ubuntu container image and packages."
     -e "KEEP_BUILD=${KEEP_BUILD:-0}" \
     -e "BUILD_JOBS=${BUILD_JOBS:-0}" \
     -w /work \
-    docker.io/library/ubuntu:26.04 \
+    docker.io/library/ubuntu:26.10 \
     /bin/bash /work/scripts/build-in-container.sh /base.iso
 
-if [[ "$HOST_UID" != 0 && -f "$PROJECT_DIR/dist/PunkSway-26.04-amd64.iso" ]]; then
+if [[ "$HOST_UID" != 0 && -f "$PROJECT_DIR/dist/PunkSway-26.10-amd64.iso" ]]; then
     if [[ "$EUID" -eq 0 ]]; then
         chown "$HOST_UID:$HOST_GID" \
-            "$PROJECT_DIR/dist/PunkSway-26.04-amd64.iso" \
-            "$PROJECT_DIR/dist/PunkSway-26.04-amd64.iso.sha256"
+            "$PROJECT_DIR/dist/PunkSway-26.10-amd64.iso" \
+            "$PROJECT_DIR/dist/PunkSway-26.10-amd64.iso.sha256"
     else
         sudo chown "$HOST_UID:$HOST_GID" \
-            "$PROJECT_DIR/dist/PunkSway-26.04-amd64.iso" \
-            "$PROJECT_DIR/dist/PunkSway-26.04-amd64.iso.sha256"
+            "$PROJECT_DIR/dist/PunkSway-26.10-amd64.iso" \
+            "$PROJECT_DIR/dist/PunkSway-26.10-amd64.iso.sha256"
     fi
 fi
