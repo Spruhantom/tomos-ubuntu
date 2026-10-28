@@ -1,14 +1,15 @@
 # PunkSway 26.04 LTS
 
-**An Ubuntu-based live OS concept with a blue-neon punk aesthetic and Sway/Wayland as the default desktop.** The project is designed to build on an Omarchy Linux host by running the image-customisation tools inside an Ubuntu 26.04 Podman container.
+**An Ubuntu-based live OS concept with a blue-neon punk aesthetic and Hyprland/Wayland as the intended desktop, with Sway retained as a fallback.** The project is designed to build on an Omarchy Linux host by running the image-customisation tools inside an Ubuntu 26.04 Podman container.
 
 > This repository contains the build project, not a prebuilt multi-gigabyte ISO. Supply the official Ubuntu base ISO; the scripts generate `dist/PunkSway-26.04-amd64.iso` locally. The source ISO is never changed.
 
 ## What's included
 
-- Sway window manager, Waybar panel, Wofi app launcher and Foot terminal.
+- Experimental Hyprland session configuration plus the original Sway session as a fallback.
+- Caelestia Shell integration notes and an optional source checkout helper. Caelestia itself is not automatically built into the ISO because its Quickshell/Qt dependency versions need validation on Ubuntu 26.04.
 - Custom neon-blue wallpaper, cyan focus borders, violet accents and matching Waybar, Wofi, Foot and Mako styles.
-- LightDM with a Sway-first session choice.
+- LightDM with the existing Sway session configuration retained; choose Hyprland at the greeter when installed.
 - A custom-branded Calamares installer configuration and launch icon, plus partitioning tools. The installer configuration is experimental until tested in a VM on both UEFI and BIOS systems.
 - NetworkManager tray applet, PipeWire tools, screenshots, clipboard tools, idle locking and a quick-start guide.
 - Build scripts to customise the live filesystem and preserve the source ISO's boot setup.
@@ -44,6 +45,12 @@ dist/PunkSway-26.04-amd64.iso.sha256
 
 **Build requirements:** x86_64 Omarchy Linux, internet access, Podman, and approximately 25–35 GB of free scratch space. The first build downloads the Ubuntu container image and installs the required tools inside it.
 
+## Hyprland and Caelestia status
+
+The project now includes `config/hypr/hyprland.conf` and `scripts/install-caelestia.sh`. The helper only checks out Caelestia Shell source; it does not install dependencies or compile it. Follow the current upstream requirements at <https://github.com/caelestia-dots/shell>, including the required git version of Quickshell and `caelestia-cli`. Ubuntu 26.04 compatibility is experimental and unverified. The ISO build does not yet include a working, prebuilt Caelestia Shell.
+
+The build still keeps Sway available as a recovery/fallback session. Test the Hyprland session in a VM before choosing it on hardware.
+
 ## Default shortcuts
 
 | Shortcut | Action |
@@ -62,7 +69,8 @@ Boot the generated ISO in a virtual machine before installing it on physical har
 
 ## Customisation
 
-- `config/sway/config`: compositor settings and shortcuts.
+- `config/hypr/hyprland.conf`: experimental Hyprland session settings.
+- `config/sway/config`: retained Sway fallback settings.
 - `config/waybar/`: panel layout and styles.
 - `config/wofi/style.css`, `config/foot/foot.ini`, `config/mako/config`: application styling.
 - `assets/render_wallpaper.py`: wallpaper generator.
