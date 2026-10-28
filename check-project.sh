@@ -45,7 +45,7 @@ build_script = (root / "build.sh").read_text()
 container_script = (root / "scripts/build-in-container.sh").read_text()
 if "ubuntu:26.10" not in build_script or "26\\.10" not in container_script:
     raise SystemExit("Build scripts do not consistently target Ubuntu 26.10")
-if "linux-image-7\\\\.3" not in container_script:
+if "linux-image-7\\.3" not in container_script:
     raise SystemExit("Build script is missing Linux 7.3 kernel package validation")
 print(f"package list and Ubuntu 26.10 kernel requirement OK: {len(packages)} packages")
 # The current Waybar config is JSON-compatible JSONC; parse it to catch syntax errors.
