@@ -11,8 +11,8 @@ ApplicationWindow {
     Material.background: theme.background; Material.foreground: theme.foreground
     Material.roundedScale: theme.radius
     property bool settingsOpen: !backend.configured
-    Shortcut { sequence: "Q"; context: Qt.ApplicationShortcut; onActivated: Qt.quit() }
-    Shortcut { sequence: "Space"; context: Qt.ApplicationShortcut; onActivated: backend.inCall ? backend.hangup() : backend.call() }
+    Shortcut { sequence: "Q"; context: Qt.ApplicationShortcut; enabled: !accountDialog.visible && !number.activeFocus; onActivated: Qt.quit() }
+    Shortcut { sequence: "Space"; context: Qt.ApplicationShortcut; enabled: !accountDialog.visible && !number.activeFocus; onActivated: backend.inCall ? backend.hangup() : backend.call() }
     Shortcut { sequence: "Escape"; context: Qt.ApplicationShortcut; onActivated: settingsOpen = false }
     ColumnLayout {
         anchors.fill: parent; anchors.margins: 30; spacing: 22
@@ -54,6 +54,7 @@ ApplicationWindow {
     Popup {
         id: accountDialog; anchors.centerIn: Overlay.overlay; width: Math.min(win.width - 40, 480); padding: 26
         modal: true; focus: true; closePolicy: Popup.CloseOnEscape
+        onClosed: win.settingsOpen = false
         background: Rectangle { color: theme.surface; radius: theme.radius; border.color: theme.border }
         ColumnLayout { width: parent.width; spacing: 12
             Label { text: qsTr("SIP account"); font.pixelSize: 22; font.weight: Font.DemiBold }
