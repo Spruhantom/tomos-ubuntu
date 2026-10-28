@@ -100,8 +100,7 @@ curl --fail --location --retry 3 --silent --show-error "$UBUNTU_BASE/SHA256SUMS"
 curl --fail --location --retry 3 --silent --show-error "$UBUNTU_BASE/$ISO_NAME" -o "$WORK/$ISO_NAME"
 checksum_line="$(awk -v name="$ISO_NAME" '{
     filename = $2
-    sub(/^\\*/, "", filename)
-    sub(/^\\\\/, "", filename)
+    sub(/^[*]/, "", filename)
     if (filename == name) { print; count++ }
 } END { if (count != 1) exit 1 }' "$WORK/SHA256SUMS")" || {
     echo "Could not find exactly one checksum entry for $ISO_NAME in the official SHA256SUMS file." >&2
