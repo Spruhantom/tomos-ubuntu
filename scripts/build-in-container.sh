@@ -115,10 +115,12 @@ if [[ -d "$ROOT/etc/apt/sources.list.d" ]]; then
     # Ubuntu 26.10 may store the installer CD-ROM source in Deb822 .sources
     # format (URIs: file:/cdrom), which cannot be removed by editing .list files.
     while IFS= read -r -d '' apt_sources; do
-        if grep -qE '^[[:space:]]*URIs:[[:space:]].*file:(//)?/cdrom' "$apt_sources"; then
+        # Drop complete Deb822 paragraphs that point to the installer CD-ROM.
+        # Use simple string matching in awk to avoid fragile escaped regexes.
+        if grep -qiE '^[[:space:]]*URIs:.*file:(//)?/cdrom' "$apt_sources"; then
             echo "Disabling installer CD-ROM source: ${apt_sources#"$ROOT"}"
             awk 'BEGIN { RS=""; ORS="\n\n" }
-                index(tolower($0), "uris: file:/cdrom") { next }
+                tolower($0) ~ /uris:/ && tolower($0) ~ /file:.*cdrom/ { next }
                 { print }' "$apt_sources" > "$apt_sources.tmp"
             cat "$apt_sources.tmp" > "$apt_sources"
             rm -f "$apt_sources.tmp"
