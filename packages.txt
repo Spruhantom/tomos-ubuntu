@@ -3,6 +3,7 @@ hyprland
 hyprlock
 hypridle
 hyprpaper
+waybar
 wofi
 foot
 mako-notifier
