@@ -51,6 +51,7 @@ fi
 if [[ ! -f "$PROJECT/assets/neon-punk.png" ]]; then
     python3 "$PROJECT/assets/render_wallpaper.py"
 fi
+python3 "$PROJECT/assets/render_plymouth.py"
 ISO_INFO="$(xorriso -indev "$BASE_ISO" -pvd_info 2>&1 || true)"
 printf '%s\n' "$ISO_INFO" | grep -E 'Volume Id|Volume id|PVD' | head -n 8 || true
 printf '%s\n' "$ISO_INFO" | grep -qi 'Ubuntu' || fail "Use the official Ubuntu Desktop ISO."
@@ -112,6 +113,21 @@ install -D -m 0644 "$PROJECT/config/calamares/branding/punk/branding.desc" "$ROO
 install -D -m 0644 "$PROJECT/config/calamares/branding/punk/show.html" "$ROOT/usr/share/calamares/branding/punk/show.html"
 install -D -m 0644 "$PROJECT/config/punksway-installer.desktop" "$ROOT/usr/share/applications/punksway-installer.desktop"
 install -D -m 0644 "$PROJECT/assets/neon-punk.png" "$ROOT/usr/share/backgrounds/punksway/neon-punk.png"
+install -D -m 0644 "$PROJECT/assets/tomos-splash.png" "$ROOT/usr/share/plymouth/themes/tomos/tomos-splash.png"
+install -D -m 0644 "$PROJECT/assets/tomos-progress-track.png" "$ROOT/usr/share/plymouth/themes/tomos/tomos-progress-track.png"
+install -D -m 0644 "$PROJECT/assets/tomos-progress-fill.png" "$ROOT/usr/share/plymouth/themes/tomos/tomos-progress-fill.png"
+install -D -m 0644 "$PROJECT/config/plymouth/tomos.script" "$ROOT/usr/share/plymouth/themes/tomos/tomos.script"
+install -D -m 0644 "$PROJECT/config/plymouth/tomos.plymouth" "$ROOT/usr/share/plymouth/themes/tomos/tomos.plymouth"
+mkdir -p "$ROOT/etc/plymouth"
+cat > "$ROOT/etc/plymouth/plymouthd.conf" <<'PLYMOUTH'
+[Daemon]
+Theme=tomos
+ShowDelay=0
+DeviceTimeout=8
+PLYMOUTH
+# Regenerate initramfs so the selected theme is included in the boot image.
+chroot "$ROOT" plymouth-set-default-theme tomos
+chroot "$ROOT" update-initramfs -u -k all
 install -D -m 0644 "$PROJECT/config/fastfetch/fastfetch-logo.txt" "$ROOT/usr/share/punksway/fastfetch-logo.txt"
 install -D -m 0755 "$PROJECT/scripts/punksway-polkit-agent.sh" "$ROOT/usr/local/bin/punksway-polkit-agent"
 copy_user_config() {
