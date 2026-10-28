@@ -42,13 +42,13 @@ Ly is the configured display/login manager and presents a TTY-based session sele
 
 INSTALLING
 ----------
-The ISO is based on Ubuntu 26.04 LTS Desktop and retains the Ubuntu installer
+The ISO is based on Ubuntu 26.10 Desktop and retains the Ubuntu installer
 from the source image. Hyprland/Caelestia integration is experimental and is not yet verified. Test in a virtual machine first. Back up important files
 before installing an operating system to a physical disk.
 
 BUILDING
 --------
 On Omarchy Linux install Podman with pacman, then run:
-  ./build.sh /path/to/ubuntu-26.04-desktop-amd64.iso
+  ./build.sh /path/to/ubuntu-26.10-desktop-amd64.iso
 
-The base image should be the official Ubuntu 26.04 LTS Desktop amd64 ISO.
+The base image should be the official Ubuntu 26.10 Desktop amd64 ISO. The build installs `linux-generic` and checks for a Linux 7.3 generic kernel image before repacking.
