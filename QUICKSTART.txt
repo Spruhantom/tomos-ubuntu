@@ -29,7 +29,7 @@ Brightness keys     Change display brightness (hardware permitting)
 
 APPS
 ----
-The app launcher lists installed desktop applications. Waybar network settings
+The app launcher lists installed desktop applications. The panel network settings
 open the NetworkManager connection editor; the volume module opens pavucontrol.
 
 LIVE SESSION VS INSTALLED SYSTEM
