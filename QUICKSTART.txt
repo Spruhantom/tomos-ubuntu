@@ -1,7 +1,7 @@
 PUNKSWAY — QUICKSTART
 =====================
 
-PunkSway is an Ubuntu-based live desktop using the Sway Wayland compositor.
+PunkSway is an Ubuntu-based live desktop project targeting Hyprland with Caelestia Shell. Sway is retained as a fallback session while the new setup is experimental.
 The default look is midnight blue, cyan neon and electric violet.
 
 KEYBOARD SHORTCUTS
@@ -42,7 +42,7 @@ uses a regular login screen and defaults to Sway. User defaults are copied from
 INSTALLING
 ----------
 The ISO is based on Ubuntu 26.04 LTS Desktop and retains the Ubuntu installer
-from the source image. Test in a virtual machine first. Back up important files
+from the source image. Hyprland/Caelestia integration is experimental and is not yet verified. Test in a virtual machine first. Back up important files
 before installing an operating system to a physical disk.
 
 BUILDING
