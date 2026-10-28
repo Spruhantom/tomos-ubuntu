@@ -26,6 +26,18 @@ The installer uses the repository's current `main` branch and requires an intern
 
 The build compiles the included Qt 6 Tomphone source and creates `build/tomphone_0.1.0_amd64.deb` inside the Ubuntu builder, then installs that package into the live filesystem. It adds a Tomphone application launcher and depends on Baresip plus Qt Quick modules and PulseAudio-compatible audio. Tomphone is a SIP audio-calling app, not a phone-data transfer utility. Package compilation and SIP/audio behaviour still need runtime testing in the built image.
 
+## Desktop concept renders
+
+These SVG renders illustrate the intended PunkSway blue-neon desktop design. They are **concept mockups, not screenshots captured from a built or running ISO**; the live appearance may differ until the image is built and tested.
+
+### Hyprland desktop and floating dock
+
+![PunkSway 26.10 desktop concept render](docs/screenshots/punksway-desktop-concept.svg)
+
+### Application launcher concept
+
+![PunkSway application launcher concept render](docs/screenshots/punksway-launcher-concept.svg)
+
 ## What's included
 
 - Hyprland/Wayland as the only supported window manager session.
