@@ -8,7 +8,7 @@
 
 - Hyprland/Wayland as the only supported window manager session.
 - Caelestia Shell integration notes and an optional source checkout helper. Caelestia itself is not automatically built into the ISO because its Quickshell/Qt dependency versions need validation on Ubuntu 26.04. Waybar and Wofi remain as a functional fallback until Caelestia is installed.
-- Custom neon-blue wallpaper, cyan focus borders, violet accents and matching Waybar, Wofi, Foot and Mako styles.
+- Tom OS-inspired purple/neon desktop based on the supplied reference: scenic neon wallpaper, slim top panel, five workspaces, translucent floating bottom app dock, rounded dark windows and coordinated colours.
 - Ly TTY display/login manager; choose the Hyprland session at login. Hyprland is the sole supported window manager.
 - A custom-branded Calamares installer configuration and launch icon, plus partitioning tools. The installer configuration is experimental until tested in a VM on both UEFI and BIOS systems.
 - NetworkManager tray applet, PipeWire tools, screenshots, clipboard tools, idle locking and a quick-start guide.
@@ -51,6 +51,10 @@ The project now includes `config/hypr/hyprland.conf` and `scripts/install-caeles
 
 Sway has been removed from the package list and build configuration. Test the Hyprland session in a VM before using the image on hardware.
 
+## Visual match and current limits
+
+The desktop aims to reproduce the reference layout using Hyprland, Waybar, Wofi and Foot. The top panel and bottom app dock are separate Waybar instances with clickable shortcuts. This is a close recreation rather than a pixel-identical copy: the Omarchy quick-settings panel and full app-grid shell are not included in this Ubuntu remix. Wofi supplies application search, and the top panel shows common status controls.
+
 ## Default shortcuts
 
 | Shortcut | Action |
@@ -70,7 +74,7 @@ Boot the generated ISO in a virtual machine before installing it on physical har
 ## Customisation
 
 - `config/hypr/hyprland.conf`: experimental Hyprland session settings.
-- `config/waybar/`: panel layout and styles.
+- `config/waybar/`: top panel, bottom dock and their styles.
 - `config/wofi/style.css`, `config/foot/foot.ini`, `config/mako/config`: application styling.
 - `assets/render_wallpaper.py`: wallpaper generator.
 - `packages.txt`: Ubuntu packages included in the image.
