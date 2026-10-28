@@ -113,6 +113,8 @@ install -D -m 0755 "$PROJECT/scripts/punksway-polkit-agent.sh" "$ROOT/usr/local/
 copy_user_config() {
     local destination="$1"
     install -D -m 0644 "$PROJECT/config/hypr/hyprland.conf" "$destination/.config/hypr/hyprland.conf"
+    install -D -m 0644 "$PROJECT/config/hypr/hypridle.conf" "$destination/.config/hypr/hypridle.conf"
+    install -D -m 0644 "$PROJECT/config/hypr/hyprpaper.conf" "$destination/.config/hypr/hyprpaper.conf"
     install -D -m 0644 "$PROJECT/config/wofi/style.css" "$destination/.config/wofi/style.css"
     install -D -m 0644 "$PROJECT/config/foot/foot.ini" "$destination/.config/foot/foot.ini"
     install -D -m 0644 "$PROJECT/config/mako/config" "$destination/.config/mako/config"
@@ -133,7 +135,7 @@ fi
 if [[ -f "$ROOT/etc/lsb-release" ]]; then sed -i 's/^DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION="PunkSway 26.04 LTS — Blue Neon Hyprland"/' "$ROOT/etc/lsb-release"; fi
 cat > "$ROOT/etc/issue" <<'ISSUE'
 \n\l
-PunkSway 26.04 LTS — Blue Neon Sway
+PunkSway 26.04 LTS — Blue Neon Hyprland
 Ubuntu-based live environment
 ISSUE
 mkdir -p "$ROOT/etc/systemd/system/graphical.target.wants"
