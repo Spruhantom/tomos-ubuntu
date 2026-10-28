@@ -63,7 +63,7 @@ packages = [
 packages = [line for line in packages if line]
 if len(packages) != len(set(packages)):
     raise SystemExit("Duplicate package names in packages.txt")
-for package in ("linux-generic", "plymouth", "plymouth-themes", "baresip", "libpulse0", "qml6-module-qtquick-controls", "qml6-module-qtquick-layouts", "qml6-module-qtquick-templates", "qml6-module-qtquick-window", "qml6-module-qtquick2"):
+for package in ("linux-generic", "plymouth", "plymouth-themes", "baresip", "libpulse0", "qml6-module-qtquick-controls", "qml6-module-qtquick-layouts", "qml6-module-qtquick-templates", "qml6-module-qtquick-window", "qml6-module-qtquick"):
     if package not in packages:
         raise SystemExit(f"Missing required package: {package}")
 
