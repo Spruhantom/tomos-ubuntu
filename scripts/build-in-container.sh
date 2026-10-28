@@ -117,8 +117,8 @@ if [[ -d "$ROOT/etc/apt/sources.list.d" ]]; then
     while IFS= read -r -d '' apt_sources; do
         if grep -qE '^[[:space:]]*URIs:[[:space:]].*file:(//)?/cdrom' "$apt_sources"; then
             echo "Disabling installer CD-ROM source: ${apt_sources#"$ROOT"}"
-            awk 'BEGIN { RS=""; ORS="\\n\\n" }
-                /(^|\\n)[[:space:]]*URIs:[[:space:]].*file:(\\/\\/)?\\/cdrom/ { next }
+            awk 'BEGIN { RS=""; ORS="\n\n" }
+                index(tolower($0), "uris: file:/cdrom") { next }
                 { print }' "$apt_sources" > "$apt_sources.tmp"
             cat "$apt_sources.tmp" > "$apt_sources"
             rm -f "$apt_sources.tmp"
