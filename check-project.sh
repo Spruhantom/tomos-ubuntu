@@ -116,6 +116,21 @@ if "fill_image.Scale(width, 12)" not in plymouth_script:
 if "ModuleName=script" not in (root / "config/plymouth/tomos.plymouth").read_text():
     raise SystemExit("Plymouth theme is not configured to use the script plugin")
 print("Plymouth theme and progress callback checks OK")
+
+hypr = (root / "config/hypr/hyprland.conf").read_text()
+if "else waybar & waybar -c ~/.config/waybar/dock.jsonc" not in hypr:
+    raise SystemExit("Waybar fallback must launch the top bar in the background before launching the dock")
+if "bind = $mainMod SHIFT, L, movewindow, r" in hypr:
+    raise SystemExit("Hyprland Super+Shift+L is assigned to both lock and move-window actions")
+
+qml = (root / "apps/tomphone/src/Main.qml").read_text()
+for shortcut in ('sequence: "Q"', 'sequence: "Space"'):
+    line = next((line for line in qml.splitlines() if shortcut in line), "")
+    if "enabled: !accountDialog.visible && !number.activeFocus" not in line:
+        raise SystemExit(f"Tomphone {shortcut} shortcut must be disabled while editing text or account settings")
+if "onClosed: win.settingsOpen = false" not in qml:
+    raise SystemExit("Tomphone account popup must reset settingsOpen when it closes")
+print("Hyprland startup/keybinding and Tomphone UI regression checks OK")
 PYTEST
 
 python3 -m py_compile "$ROOT/assets/render_wallpaper.py" "$ROOT/assets/render_plymouth.py"
