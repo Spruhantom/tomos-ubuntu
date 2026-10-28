@@ -38,7 +38,17 @@ The build compiles the included Qt 6 Tomphone source and creates `build/tomphone
 - Tomphone Qt 6 SIP softphone packaged as an Ubuntu `.deb` during the build.
 - Build scripts to customise the live filesystem and preserve the source ISO's boot setup.
 
-## Build on Omarchy Linux
+## One-line full-project ISO build
+
+On an x86_64 Ubuntu/Debian or Arch-based Linux host, this command downloads the project and the official Ubuntu 26.10 Desktop amd64 ISO, verifies the ISO checksum, installs Podman, and builds the complete PunkSway ISO:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Spruhantom/tomos-ubuntu/main/scripts/build-punksway-iso.sh | sudo bash
+```
+
+The build output is saved under `/var/tmp/punksway-iso-build/project/dist/`. It needs internet access and approximately 25–35 GB of free disk space, and can take a while. It creates an ISO file only; it does **not** install or replace the operating system on the host. Review `scripts/build-punksway-iso.sh` before running a remote script as root, then test the resulting ISO in a virtual machine before installing it on hardware.
+
+## Build manually on Omarchy Linux
 
 Install Podman:
 
