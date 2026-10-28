@@ -102,7 +102,12 @@ chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get update
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${PACKAGES[@]}"
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get purge -y gdm3 || true
 
-echo "[4/7] Applying PunkSway configuration..."
+echo "[4/7] Applying PunkSway configuration and Calamares installer..."
+install -D -m 0644 "$PROJECT/config/calamares/settings.conf" "$ROOT/etc/calamares/settings.conf"
+if [[ -d "$PROJECT/config/calamares/modules" ]]; then cp -a "$PROJECT/config/calamares/modules/." "$ROOT/etc/calamares/modules/"; fi
+install -D -m 0644 "$PROJECT/config/calamares/branding/punk/branding.desc" "$ROOT/etc/calamares/branding/punk/branding.desc"
+install -D -m 0644 "$PROJECT/config/calamares/branding/punk/show.html" "$ROOT/etc/calamares/branding/punk/show.html"
+install -D -m 0644 "$PROJECT/config/punksway-installer.desktop" "$ROOT/usr/share/applications/punksway-installer.desktop"
 install -D -m 0644 "$PROJECT/assets/neon-punk.png" "$ROOT/usr/share/backgrounds/punksway/neon-punk.png"
 install -D -m 0755 "$PROJECT/scripts/punksway-live-login.sh" "$ROOT/usr/local/sbin/punksway-live-login"
 install -D -m 0755 "$PROJECT/scripts/punksway-polkit-agent.sh" "$ROOT/usr/local/bin/punksway-polkit-agent"
