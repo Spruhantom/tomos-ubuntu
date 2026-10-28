@@ -61,7 +61,18 @@ rm -rf "$WORK"
 mkdir -p "$TREE"
 echo "[1/8] Extracting original ISO tree..."
 xorriso -osirrox on -indev "$BASE_ISO" -extract / "$TREE"
-[[ -f "$TREE/casper/filesystem.squashfs" ]] || fail "No casper/filesystem.squashfs found."
+# Ubuntu 26.10 Desktop renamed the live root filesystem to minimal.squashfs.
+# Keep compatibility with releases that still use filesystem.squashfs.
+if [[ -f "$TREE/casper/filesystem.squashfs" ]]; then
+    SQUASHFS_NAME=filesystem.squashfs
+elif [[ -f "$TREE/casper/minimal.squashfs" ]]; then
+    SQUASHFS_NAME=minimal.squashfs
+else
+    echo "Available files in casper:" >&2
+    find "$TREE/casper" -maxdepth 1 -type f -printf '%f\n' >&2 || true
+    fail "No supported live root filesystem found (expected casper/filesystem.squashfs or casper/minimal.squashfs)."
+fi
+ORIGINAL_SQ="$TREE/casper/$SQUASHFS_NAME"
 [[ -f "$TREE/.disk/info" ]] || fail "No .disk/info found."
 SOURCE_INFO="$(cat "$TREE/.disk/info")"
 printf 'Source image: %s\n' "$SOURCE_INFO"
@@ -72,7 +83,7 @@ echo "[2/8] Unpacking the live filesystem..."
 BUILD_JOBS="${BUILD_JOBS:-$(nproc)}"
 [[ "$BUILD_JOBS" =~ ^[0-9]+$ ]] && (( BUILD_JOBS > 0 )) || BUILD_JOBS="$(nproc)"
 (( BUILD_JOBS > 8 )) && BUILD_JOBS=8
-unsquashfs -processors "$BUILD_JOBS" -d "$ROOT" "$TREE/casper/filesystem.squashfs"
+unsquashfs -processors "$BUILD_JOBS" -d "$ROOT" "$ORIGINAL_SQ"
 grep -qE '^VERSION_ID="?26\.10"?$' "$ROOT/usr/lib/os-release" || fail "Live filesystem is not Ubuntu 26.10."
 
 if [[ -L "$ROOT/etc/resolv.conf" ]]; then
@@ -197,7 +208,6 @@ for cfg in "$TREE/boot/grub/grub.cfg" "$TREE/boot/grub/loopback.cfg"; do
 done
 printf '%s\n' 'PunkSway 26.10 amd64 — Ubuntu-based Blue Neon Hyprland remix' > "$TREE/.disk/info"
 echo "[6/8] Rebuilding compressed live filesystem..."
-ORIGINAL_SQ="$TREE/casper/filesystem.squashfs"
 SQ_INFO="$(unsquashfs -s "$ORIGINAL_SQ" 2>&1 || true)"
 SQ_COMP="$(printf '%s\n' "$SQ_INFO" | awk '$1 == "Compression" { print $2; exit }')"
 SQ_BLOCK="$(printf '%s\n' "$SQ_INFO" | awk '$1 == "Block" && $2 == "size" { print $3; exit }')"
@@ -211,7 +221,7 @@ rm -rf "$ROOT"
 echo "[7/8] Rebuilding bootable ISO..."
 rm -f "$OUTPUT"
 XORRISO_ARGS=(-indev "$BASE_ISO" -outdev "$OUTPUT" -boot_image any replay
-    -map "$TREE/casper/filesystem.squashfs" /casper/filesystem.squashfs
+    -map "$ORIGINAL_SQ" "/casper/$SQUASHFS_NAME"
     -map "$TREE/casper/filesystem.size" /casper/filesystem.size
     -map "$TREE/md5sum.txt" /md5sum.txt
     -map "$TREE/.disk/info" /.disk/info
