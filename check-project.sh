@@ -78,8 +78,26 @@ print("Waybar, Fastfetch and Caelestia JSON syntax OK")
 PYTEST
 python3 -m py_compile "$ROOT/assets/render_wallpaper.py" "$ROOT/assets/render_plymouth.py"
 echo "Python syntax OK: wallpaper and Plymouth renderers"
-if ! grep -q 'plymouth-theme-script' "$ROOT/packages.txt"; then
-    echo "Missing plymouth-theme-script package" >&2; exit 1
+if ! grep -qE '^plymouth
+if ! grep -q 'Plymouth.SetBootProgressFunction' "$ROOT/config/plymouth/tomos.script"; then
+    echo "Plymouth theme does not update the progress bar from boot progress" >&2; exit 1
+fi
+echo "Plymouth theme assets and progress callback OK"
+if [[ -f "$ROOT/assets/neon-punk.png" ]]; then
+    file "$ROOT/assets/neon-punk.png"
+else
+    echo "Wallpaper PNG not present yet; build.sh generates it before building the ISO."
+fi "$ROOT/packages.txt" || ! grep -qE '^plymouth-themes
+if ! grep -q 'Plymouth.SetBootProgressFunction' "$ROOT/config/plymouth/tomos.script"; then
+    echo "Plymouth theme does not update the progress bar from boot progress" >&2; exit 1
+fi
+echo "Plymouth theme assets and progress callback OK"
+if [[ -f "$ROOT/assets/neon-punk.png" ]]; then
+    file "$ROOT/assets/neon-punk.png"
+else
+    echo "Wallpaper PNG not present yet; build.sh generates it before building the ISO."
+fi "$ROOT/packages.txt"; then
+    echo "Missing Plymouth runtime/theme packages" >&2; exit 1
 fi
 if ! grep -q 'Plymouth.SetBootProgressFunction' "$ROOT/config/plymouth/tomos.script"; then
     echo "Plymouth theme does not update the progress bar from boot progress" >&2; exit 1
