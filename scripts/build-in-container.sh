@@ -115,17 +115,24 @@ if [[ -d "$ROOT/etc/apt/sources.list.d" ]]; then
     # Ubuntu 26.10 may store the installer CD-ROM source in Deb822 .sources
     # format (URIs: file:/cdrom), which cannot be removed by editing .list files.
     while IFS= read -r -d '' apt_sources; do
-        # Drop complete Deb822 paragraphs that point to the installer CD-ROM.
-        # Use simple string matching in awk to avoid fragile escaped regexes.
-        if grep -qiE '^[[:space:]]*URIs:.*file:(//)?/cdrom' "$apt_sources"; then
-            echo "Disabling installer CD-ROM source: ${apt_sources#"$ROOT"}"
+        # Deb822 fields can wrap onto continuation lines, so inspect each whole
+        # stanza for file:/cdrom rather than relying on the URIs line alone.
+        if grep -qiE 'file:.*cdrom' "$apt_sources"; then
+            echo "Disabling installer CD-ROM source stanza(s): ${apt_sources#"$ROOT"}"
             awk 'BEGIN { RS=""; ORS="\n\n" }
-                tolower($0) ~ /uris:/ && tolower($0) ~ /file:.*cdrom/ { next }
+                tolower($0) ~ /file:.*cdrom/ { next }
                 { print }' "$apt_sources" > "$apt_sources.tmp"
             cat "$apt_sources.tmp" > "$apt_sources"
             rm -f "$apt_sources.tmp"
         fi
     done < <(find "$ROOT/etc/apt/sources.list.d" -maxdepth 1 -type f -name '*.sources' -print0)
+    # Fail early with a clear diagnostic if an installer-only source remains.
+    if grep -RqiE '^[[:space:]]*URIs:.*file:.*cdrom|^[[:space:]]*deb(-src)?[[:space:]].*file:.*cdrom' \
+        "$ROOT/etc/apt/sources.list" "$ROOT/etc/apt/sources.list.d" 2>/dev/null; then
+        echo "ERROR: An installer CD-ROM APT source is still enabled:" >&2
+        grep -RniE 'file:.*cdrom|cdrom:' "$ROOT/etc/apt/sources.list" "$ROOT/etc/apt/sources.list.d" 2>/dev/null >&2 || true
+        fail "Could not disable the installer CD-ROM APT source."
+    fi
 fi
 if [[ -f "$ROOT/etc/apt/sources.list.d/ubuntu.sources" ]]; then
     sed -i -E 's/^Components:.*/Components: main restricted universe multiverse/' "$ROOT/etc/apt/sources.list.d/ubuntu.sources"
