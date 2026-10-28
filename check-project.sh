@@ -65,7 +65,7 @@ packages = [
 packages = [line for line in packages if line]
 if len(packages) != len(set(packages)):
     raise SystemExit("Duplicate package names in packages.txt")
-for package in ("linux-generic", "plymouth", "plymouth-themes", "baresip", "libpulse0", "qml6-module-qtquick-controls", "qml6-module-qtquick-layouts", "qml6-module-qtquick-templates", "qml6-module-qtquick-window", "qml6-module-qtquick"):
+for package in ("linux-generic", "plymouth", "plymouth-themes", "sddm", "baresip", "libpulse0", "qml6-module-qtquick-controls", "qml6-module-qtquick-layouts", "qml6-module-qtquick-templates", "qml6-module-qtquick-window", "qml6-module-qtquick"):
     if package not in packages:
         raise SystemExit(f"Missing required package: {package}")
 
@@ -75,6 +75,8 @@ if "ubuntu:26.10" not in build_script or r"26\.10" not in container_script:
     raise SystemExit("Build scripts do not consistently target Ubuntu 26.10")
 if r"linux-image-7\.3" not in container_script:
     raise SystemExit("Build script is missing Linux 7.3 kernel validation")
+if "sddm.service" not in container_script or "select sddm" not in container_script:
+    raise SystemExit("Build script must configure the installed SDDM display manager")
 if 'python3 "$PROJECT/assets/render_plymouth.py"' not in container_script:
     raise SystemExit("Build script does not generate the Plymouth splash assets")
 if "update-initramfs -u -k all" not in container_script:
