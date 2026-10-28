@@ -12,7 +12,7 @@ root = Path(sys.argv[1])
 json.load((root / "config/waybar/config.jsonc").open(encoding="utf-8"))
 print("JSON syntax OK: config/waybar/config.jsonc")
 required = [
-    "assets/neon-punk.png",
+    "assets/render_wallpaper.py",
     "packages.txt",
     "config/sway/config",
     "config/waybar/style.css",
