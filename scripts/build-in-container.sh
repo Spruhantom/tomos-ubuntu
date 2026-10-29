@@ -208,7 +208,7 @@ PLYMOUTH
 # Make the Tom OS theme the explicit Plymouth default for both live and installed systems.
 chroot "$ROOT" update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/tomos/tomos.plymouth 100
 chroot "$ROOT" update-alternatives --set default.plymouth /usr/share/plymouth/themes/tomos/tomos.plymouth
-DEFAULT_PLYMOUTH="$(readlink "$ROOT/usr/share/plymouth/themes/default.plymouth" 2>/dev/null || true)"
+DEFAULT_PLYMOUTH="$(readlink -f "$ROOT/usr/share/plymouth/themes/default.plymouth" 2>/dev/null || true)"
 [[ "$DEFAULT_PLYMOUTH" == *"/plymouth/themes/tomos/tomos.plymouth" ]] || fail "Tom OS Plymouth theme is not the selected system default."
 # Keep the splash enabled in the installed system's generated GRUB configuration too.
 if [[ -f "$ROOT/etc/default/grub" ]]; then
@@ -318,7 +318,18 @@ chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get clean
 rm -rf "$ROOT/var/lib/apt/lists"/*
 cleanup_mounts; restore_chroot_files; RESOLV_KIND=missing; POLICY_WAS_PRESENT=0; POLICY_BACKUP=""
 for cfg in "$TREE/boot/grub/grub.cfg" "$TREE/boot/grub/loopback.cfg"; do
-    if [[ -f "$cfg" ]]; then sed -i -e 's/Try or Install Ubuntu/Try or Install PunkSway/g' -e 's/Install Ubuntu/Install PunkSway/g' -e 's/Ubuntu 26\.10 LTS/PunkSway 26.10/g' "$cfg"; fi
+    if [[ -f "$cfg" ]]; then
+        sed -i -e 's/Try or Install Ubuntu/Try or Install PunkSway/g' -e 's/Install Ubuntu/Install PunkSway/g' -e 's/Ubuntu 26\.10 LTS/PunkSway 26.10/g' "$cfg"
+        # Enable the Plymouth splash on live boots, placing options before the
+        # initramfs separator when Ubuntu's GRUB entry uses one.
+        sed -i -E '/^[[:space:]]*(linux|linuxefi)[[:space:]]/ {
+            /quiet/! s/([[:space:]]---)/ quiet\1/
+            /splash/! s/([[:space:]]---)/ splash\1/
+            /quiet/! s/$/ quiet/
+            /splash/! s/$/ splash/
+        }' "$cfg"
+        grep -Eq '^[[:space:]]*(linux|linuxefi)[[:space:]].*quiet.*splash|^[[:space:]]*(linux|linuxefi)[[:space:]].*splash.*quiet' "$cfg" || fail "Could not enable quiet splash on live GRUB entries in $cfg."
+    fi
 done
 printf '%s\n' 'PunkSway 26.10 amd64 — Ubuntu-based Blue Neon Hyprland remix' > "$TREE/.disk/info"
 echo "[6/8] Rebuilding compressed live filesystem..."
