@@ -22,7 +22,7 @@ ApplicationWindow {
                 Label { text: qsTr("Softphone"); font.pixelSize: 28; font.weight: Font.DemiBold }
             }
             Item { Layout.fillWidth: true }
-            ToolButton { text: "⚙"; font.pixelSize: 23; onClicked: settingsOpen = !settingsOpen; Accessible.name: qsTr("Account settings") }
+            ToolButton { text: "⚙"; font.pixelSize: 23; onClicked: { if (accountDialog.visible) accountDialog.close(); else { settingsOpen = true; accountDialog.open() } }; Accessible.name: qsTr("Account settings") }
         }
         Rectangle {
             Layout.fillWidth: true; Layout.fillHeight: true; radius: theme.radius; color: theme.surface
