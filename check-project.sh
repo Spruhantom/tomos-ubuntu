@@ -27,6 +27,7 @@ required = [
     "apps/tomphone/share/applications/tomphone.desktop",
     "apps/tomphone/share/icons/hicolor/scalable/apps/tomphone.svg",
     "scripts/build-tomphone-deb.sh",
+    "scripts/fix-display-manager.sh",
     "scripts/install-tomphone.sh",
     "scripts/build-punksway-iso.sh",
     "config/plymouth/tomos.plymouth",
@@ -93,6 +94,13 @@ print("Tomphone curl installer checks OK")
 if "dpkg-deb --root-owner-group --build" not in (root / "scripts/build-tomphone-deb.sh").read_text():
     raise SystemExit("Tomphone package builder does not create a Debian package")
 print("Tomphone Ubuntu package integration checks OK")
+if "systemctl --root=\"$ROOT\" set-default graphical.target" not in container_script:
+    raise SystemExit("Build script does not set graphical.target as the default")
+if "display-manager.service" not in container_script or "sddm.service" not in container_script:
+    raise SystemExit("Build script does not configure and verify SDDM as the display manager")
+if "fix-display-manager.sh" not in container_script:
+    raise SystemExit("Display-manager recovery helper is not installed")
+print("Display-manager boot configuration checks OK")
 
 for rel in (
     "config/waybar/config.jsonc",
