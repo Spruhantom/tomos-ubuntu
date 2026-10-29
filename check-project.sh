@@ -83,6 +83,12 @@ if "sddm.service" not in container_script or "select sddm" not in container_scri
     raise SystemExit("Build script must configure the installed SDDM display manager")
 if 'python3 "$PROJECT/assets/render_plymouth.py"' not in container_script:
     raise SystemExit("Build script does not generate the Plymouth splash assets")
+if "update-alternatives --set default.plymouth /usr/share/plymouth/themes/tomos/tomos.plymouth" not in container_script:
+    raise SystemExit("Build script does not set the Tom OS Plymouth theme as the system default")
+if 'Theme=tomos' not in container_script:
+    raise SystemExit("Plymouth daemon is not configured to use the Tom OS splash theme")
+if 'GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"' not in container_script:
+    raise SystemExit("Installed system GRUB configuration does not enable the custom Plymouth splash")
 if "update-initramfs -u -k all" not in container_script:
     raise SystemExit("Build script does not regenerate initramfs after selecting Plymouth theme")
 print(f"package and build requirements OK: {len(packages)} packages")
