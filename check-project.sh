@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
-for script in "$ROOT/build.sh" "$ROOT/scripts/build-in-container.sh" "$ROOT/scripts/build-tomphone-deb.sh" "$ROOT/scripts/install-tomphone.sh" "$ROOT/scripts/build-punksway-iso.sh" "$ROOT/scripts/punksway-polkit-agent.sh" "$ROOT/scripts/install-caelestia.sh"; do
+for script in "$ROOT/build.sh" "$ROOT/scripts/build-in-container.sh" "$ROOT/scripts/build-tomphone-deb.sh" "$ROOT/scripts/install-tomphone.sh" "$ROOT/scripts/fix-display-manager.sh" "$ROOT/scripts/enable-sddm.sh" "$ROOT/scripts/build-punksway-iso.sh" "$ROOT/scripts/punksway-polkit-agent.sh" "$ROOT/scripts/install-caelestia.sh"; do
     bash -n "$script"
     echo "shell syntax OK: ${script#"$ROOT"/}"
 done
@@ -112,7 +112,12 @@ for rel in ("config/calamares/modules/displaymanager.conf", "config/calamares/mo
 services_config = (root / "config/calamares/modules/services-systemd.conf").read_text()
 if "  - sddm" not in services_config:
     raise SystemExit("Calamares will not enable SDDM on the freshly installed system")
-print("Display-manager boot configuration checks OK")
+unpackfs = (root / "config/calamares/modules/unpackfs.conf").read_text()
+if "/cdrom/casper/filesystem.squashfs" not in unpackfs:
+    raise SystemExit("Calamares unpackfs default source should be the standard filesystem.squashfs name")
+if "UNPACKFS_CONFIG" not in container_script or "SQUASHFS_NAME" not in container_script[container_script.find("Match Calamares"):container_script.find("Match Calamares") + 700]:
+    raise SystemExit("Build script does not align Calamares unpackfs source with the ISO squashfs filename")
+print("Display-manager and Calamares source checks OK")
 
 for rel in (
     "config/waybar/config.jsonc",
