@@ -241,7 +241,7 @@ Ubuntu-based live environment
 ISSUE
 # Ensure systemd reaches the graphical target and SDDM owns the display-manager alias.
 systemctl --root="$ROOT" set-default graphical.target
-systemctl --root="$ROOT" disable gdm3.service lightdm.service ly.service >/dev/null 2>&1 || true
+systemctl --root="$ROOT" disable gdm3.service lightdm.service >/dev/null 2>&1 || true
 rm -f "$ROOT/etc/systemd/system/display-manager.service"
 [[ -x "$ROOT/usr/bin/sddm" ]] || fail "SDDM is not installed in the live filesystem."
 [[ -f "$ROOT/usr/share/wayland-sessions/hyprland.desktop" ]] || fail "Hyprland Wayland session file is missing."
