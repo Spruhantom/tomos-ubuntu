@@ -107,6 +107,10 @@ if "10-punksway-live-autologin.conf" not in container_script:
     raise SystemExit("Live ISO SDDM autologin must use an explicitly live-only configuration file")
 if "systemctl --root=\"$ROOT\" enable sddm.service" not in container_script:
     raise SystemExit("Build script does not enable SDDM in the live filesystem")
+if "wordcraft-0.11.0-linux-x86_64.deb" not in container_script or "SHA256SUMS.txt" not in container_script:
+    raise SystemExit("Build script does not download and verify the pinned WordCraft release")
+if "apt-get install -y \"/tmp/$WORDCRAFT_DEB\"" not in container_script:
+    raise SystemExit("Build script does not install WordCraft into the live filesystem")
 if "fix-display-manager.sh" not in container_script:
     raise SystemExit("Display-manager recovery helper is not installed")
 for rel in ("config/calamares/modules/displaymanager.conf", "config/calamares/modules/services-systemd.conf"):
