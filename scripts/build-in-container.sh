@@ -239,19 +239,31 @@ cat > "$ROOT/etc/issue" <<'ISSUE'
 PunkSway 26.10 — Blue Neon Hyprland
 Ubuntu-based live environment
 ISSUE
-mkdir -p "$ROOT/etc/systemd/system/graphical.target.wants"
-systemctl --root="$ROOT" disable gdm3.service lightdm.service >/dev/null 2>&1 || true
+# Ensure systemd reaches the graphical target and SDDM owns the display-manager alias.
+systemctl --root="$ROOT" set-default graphical.target
+systemctl --root="$ROOT" disable gdm3.service lightdm.service ly.service >/dev/null 2>&1 || true
 rm -f "$ROOT/etc/systemd/system/display-manager.service"
-# Configure the expected live-session autologin for the SDDM display manager.
+[[ -x "$ROOT/usr/bin/sddm" ]] || fail "SDDM is not installed in the live filesystem."
 [[ -f "$ROOT/usr/share/wayland-sessions/hyprland.desktop" ]] || fail "Hyprland Wayland session file is missing."
 mkdir -p "$ROOT/etc/sddm.conf.d"
-cat > "$ROOT/etc/sddm.conf.d/10-punksway-autologin.conf" <<'SDDM'
+cat > "$ROOT/etc/sddm.conf.d/10-punksway.conf" <<'SDDM'
+[General]
+HaltCommand=/usr/bin/systemctl poweroff
+RebootCommand=/usr/bin/systemctl reboot
+
 [Autologin]
 User=ubuntu
 Session=hyprland.desktop
-Relogin=true
+Relogin=false
 SDDM
 systemctl --root="$ROOT" enable sddm.service
+# Fail the image build if systemd did not create the display-manager alias.
+[[ -L "$ROOT/etc/systemd/system/display-manager.service" ]] || fail "SDDM did not create display-manager.service; graphical login would not start."
+if [[ "$(readlink "$ROOT/etc/systemd/system/default.target" 2>/dev/null || true)" != *graphical.target ]]; then
+    fail "Default systemd target is not graphical.target."
+fi
+install -D -m 0755 "$PROJECT/scripts/fix-display-manager.sh" "$ROOT/usr/local/sbin/fix-display-manager"
+
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get clean
 rm -rf "$ROOT/var/lib/apt/lists"/*
 cleanup_mounts; restore_chroot_files; RESOLV_KIND=missing; POLICY_WAS_PRESENT=0; POLICY_BACKUP=""
