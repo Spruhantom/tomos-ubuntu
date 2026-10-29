@@ -113,8 +113,8 @@ if "display-manager.service" not in container_script or "sddm.service" not in co
     raise SystemExit("Build script does not configure and verify SDDM as the display manager")
 if "[Autologin]" not in container_script or "User=ubuntu" not in container_script or "Session=hyprland.desktop" not in container_script:
     raise SystemExit("Live ISO SDDM autologin is not configured for the Ubuntu user and Hyprland")
-if 'export USERNAME="ubuntu"' not in container_script or 'CASPER_CONF="$ROOT/etc/casper.conf"' not in container_script:
-    raise SystemExit("Build script must configure Casper to create the Ubuntu live user at boot")
+if 'export USERNAME="ubuntu"' not in container_script or 'export FLAVOUR="PunkSway"' not in container_script or 'CASPER_CONF="$ROOT/etc/casper.conf"' not in container_script:
+    raise SystemExit("Build script must configure Casper to create the Ubuntu live user with the PunkSway identity at boot")
 if 'do not require it in the build-time passwd file' not in container_script:
     raise SystemExit("Build script must not fail when Casper has not created the live user yet")
 if "10-punksway-live-autologin.conf" not in container_script:
