@@ -261,29 +261,18 @@ if [[ -f "$ROOT/etc/adduser.conf" ]]; then
         printf '\nDSHELL=/usr/bin/zsh\n' >> "$ROOT/etc/adduser.conf"
     fi
 fi
-# Some Ubuntu Desktop minimal.squashfs builds do not contain the usual
-# "ubuntu" live account at image-build time. Create it when absent so SDDM
-# autologin has a real account when the ISO boots.
-if ! chroot "$ROOT" getent passwd ubuntu >/dev/null; then
-    echo "Ubuntu live account is absent; creating it for SDDM autologin."
-    chroot "$ROOT" useradd --create-home --shell /usr/bin/zsh ubuntu || fail "Could not create the Ubuntu live user."
-fi
-LIVE_ENTRY="$(chroot "$ROOT" getent passwd ubuntu)"
-[[ -n "$LIVE_ENTRY" ]] || fail "Ubuntu live user is still missing after account setup."
-IFS=: read -r _ _ LIVE_UID LIVE_GID _ <<< "$LIVE_ENTRY"
-LIVE_HOME=/home/ubuntu
-mkdir -p "$ROOT$LIVE_HOME"
-chown "$LIVE_UID:$LIVE_GID" "$ROOT$LIVE_HOME"
-copy_user_config "$ROOT$LIVE_HOME"
-chown -R "$LIVE_UID:$LIVE_GID" "$ROOT$LIVE_HOME/.config"
-chown "$LIVE_UID:$LIVE_GID" "$ROOT$LIVE_HOME/.zshrc"
-chroot "$ROOT" usermod -s /usr/bin/zsh ubuntu
-# Keep live-session administration passwordless, as expected for an installer
-# session; only grant this to the dedicated live account.
-mkdir -p "$ROOT/etc/sudoers.d"
-printf 'ubuntu ALL=(ALL:ALL) NOPASSWD:ALL\n' > "$ROOT/etc/sudoers.d/ubuntu"
-chmod 0440 "$ROOT/etc/sudoers.d/ubuntu"
-chroot "$ROOT" visudo -cf /etc/sudoers.d/ubuntu >/dev/null || fail "Live-user sudoers configuration is invalid."
+# Casper creates the live-session user during boot; it is intentionally absent
+# from the unpacked squashfs at build time. Configure Casper rather than
+# pre-creating the account, which could conflict with its UID/GID setup.
+CASPER_CONF="$ROOT/etc/casper.conf"
+mkdir -p "$ROOT/etc"
+touch "$CASPER_CONF"
+cat >> "$CASPER_CONF" <<'CASPER'
+# PunkSway live-session identity (read by Casper during boot).
+export USERNAME="ubuntu"
+export USERFULLNAME="PunkSway Live Session"
+export HOST="punksway"
+CASPER
 install -D -m 0644 "$PROJECT/config/punksway-quickstart.desktop" "$ROOT/usr/share/applications/punksway-quickstart.desktop"
 install -D -m 0644 "$PROJECT/QUICKSTART.txt" "$ROOT/usr/share/doc/punksway/QUICKSTART.txt"
 if [[ -f "$ROOT/usr/lib/os-release" ]]; then
@@ -317,7 +306,7 @@ Session=hyprland.desktop
 Relogin=false
 SDDM
 # Live autologin only works if the Ubuntu live user exists in the filesystem.
-grep -q '^ubuntu:' "$ROOT/etc/passwd" || fail "Ubuntu live user is missing; SDDM autologin cannot work."
+# Casper creates the ubuntu account during live boot; do not require it in the build-time passwd file.
 # Confirm the configured session points to an installed session desktop file.
 SESSION_FILE="$ROOT/usr/share/wayland-sessions/hyprland.desktop"
 grep -Eq '^Exec=.*([Hh]yprland)' "$SESSION_FILE" || fail "Hyprland session desktop entry has no valid Exec command."
