@@ -4,7 +4,7 @@
 
 > This repository contains the build project, not a prebuilt multi-gigabyte ISO. Supply the official Ubuntu base ISO; the scripts generate `dist/PunkSway-26.10-amd64.iso` locally. The source ISO is never changed.
 
-## Plymouth boot splash
+## WordCraft word processor\n\nThe live ISO includes [WordCraft](https://github.com/storytold/wordcraft), an open-source Rust word processor. The build downloads the upstream x86_64 Ubuntu `.deb` for version 0.11.0 and verifies it against the release `SHA256SUMS.txt` before installing it into the live filesystem. A working network connection is required during the build. The release is pinned intentionally for repeatability; update `WORDCRAFT_VERSION` in `scripts/build-in-container.sh` to move to a newer release.\n\n## Plymouth boot splash
 
 The image includes a custom Tom OS purple/cyan Plymouth theme. The build renders the splash artwork from `assets/render_plymouth.py`, installs the script theme and enables the Plymouth script plugin. The progress bar fill is resized from Plymouth boot-progress callbacks, so it reflects reported boot progress. This has been statically configured but still needs an ISO build and VM boot test.
 
@@ -127,7 +127,7 @@ Boot the generated ISO in a virtual machine before installing it on physical har
 - `assets/render_plymouth.py`, `config/plymouth/`: Tom OS Plymouth boot splash and progress bar.
 - `config/zsh/.zshrc`: default Zsh prompt, aliases and Fastfetch startup.
 - `config/fastfetch/`: custom terminal system summary and Tom OS ASCII logo.
-- `apps/tomphone/`: Tomphone source and Ubuntu package metadata.
+- `apps/tomphone/`: Tomphone source and Ubuntu package metadata.\n- WordCraft: upstream Rust word processor, installed from its verified Linux `.deb` release.
 - `scripts/build-tomphone-deb.sh`: builds the Tomphone `.deb` package.
 - `packages.txt`: Ubuntu packages included in the image.
 
