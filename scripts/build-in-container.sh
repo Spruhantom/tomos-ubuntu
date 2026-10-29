@@ -272,6 +272,7 @@ cat >> "$CASPER_CONF" <<'CASPER'
 export USERNAME="ubuntu"
 export USERFULLNAME="PunkSway Live Session"
 export HOST="punksway"
+export FLAVOUR="PunkSway"
 CASPER
 install -D -m 0644 "$PROJECT/config/punksway-quickstart.desktop" "$ROOT/usr/share/applications/punksway-quickstart.desktop"
 install -D -m 0644 "$PROJECT/QUICKSTART.txt" "$ROOT/usr/share/doc/punksway/QUICKSTART.txt"
