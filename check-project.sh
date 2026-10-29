@@ -100,12 +100,17 @@ if "systemctl --root=\"$ROOT\" set-default graphical.target" not in container_sc
     raise SystemExit("Build script does not set graphical.target as the default")
 if "display-manager.service" not in container_script or "sddm.service" not in container_script:
     raise SystemExit("Build script does not configure and verify SDDM as the display manager")
+if "systemctl --root=\"$ROOT\" enable sddm.service" not in container_script:
+    raise SystemExit("Build script does not enable SDDM in the live filesystem")
 if "fix-display-manager.sh" not in container_script:
     raise SystemExit("Display-manager recovery helper is not installed")
 for rel in ("config/calamares/modules/displaymanager.conf", "config/calamares/modules/services-systemd.conf"):
     text = (root / rel).read_text()
     if "  - sddm" not in text or "lightdm" in text:
         raise SystemExit(f"{rel} must select SDDM and must not reference LightDM")
+services_config = (root / "config/calamares/modules/services-systemd.conf").read_text()
+if "  - sddm" not in services_config:
+    raise SystemExit("Calamares will not enable SDDM on the freshly installed system")
 print("Display-manager boot configuration checks OK")
 
 for rel in (
