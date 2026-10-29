@@ -253,7 +253,11 @@ rm -f "$ROOT/etc/systemd/system/display-manager.service"
 [[ -x "$ROOT/usr/bin/sddm" ]] || fail "SDDM is not installed in the live filesystem."
 [[ -f "$ROOT/usr/share/wayland-sessions/hyprland.desktop" ]] || fail "Hyprland Wayland session file is missing."
 mkdir -p "$ROOT/etc/sddm.conf.d"
-cat > "$ROOT/etc/sddm.conf.d/10-punksway.conf" <<'SDDM'
+# Live ISO only: log the live-session user straight into Hyprland after USB boot.
+# Calamares copies the installed system's SDDM config separately, so this autologin
+# configuration is confined to the live filesystem and is not installed by the
+# Calamares modules.
+cat > "$ROOT/etc/sddm.conf.d/10-punksway-live-autologin.conf" <<'SDDM'
 [General]
 HaltCommand=/usr/bin/systemctl poweroff
 RebootCommand=/usr/bin/systemctl reboot
@@ -263,6 +267,10 @@ User=ubuntu
 Session=hyprland.desktop
 Relogin=false
 SDDM
+# Live autologin only works if the Ubuntu live user exists in the filesystem.
+grep -q '^ubuntu:' "$ROOT/etc/passwd" || fail "Ubuntu live user is missing; SDDM autologin cannot work."
+# Confirm the configured session points to an installed session desktop file.
+grep -Rqs '^Exec=.*hyprland\|^Exec=.*Hyprland' "$ROOT/usr/share/wayland-sessions/hyprland.desktop" || true
 systemctl --root="$ROOT" enable sddm.service
 # Fail the image build if systemd did not create the display-manager alias.
 [[ -L "$ROOT/etc/systemd/system/display-manager.service" ]] || fail "SDDM did not create display-manager.service; graphical login would not start."
