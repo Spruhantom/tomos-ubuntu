@@ -47,7 +47,7 @@ if ! command -v xorriso >/dev/null || ! command -v unsquashfs >/dev/null || ! co
     if ! apt-get -o Acquire::Retries=3 update; then
         fail "APT could not reach Ubuntu package mirrors. Check host internet/DNS and rerun the builder; Podman host networking is enabled by build.sh."
     fi
-    apt-get install -y --no-install-recommends ca-certificates xorriso squashfs-tools rsync systemd util-linux coreutils findutils gawk python3-pil build-essential qt6-base-dev qt6-declarative-dev qmake6 dpkg-dev
+    apt-get install -y --no-install-recommends ca-certificates curl xorriso squashfs-tools rsync systemd util-linux coreutils findutils gawk python3-pil build-essential qt6-base-dev qt6-declarative-dev qmake6 dpkg-dev
 fi
 
 if [[ ! -f "$PROJECT/assets/neon-punk.png" ]]; then
@@ -145,6 +145,19 @@ done < "$PROJECT/packages.txt"
 echo "[3/8] Building Tomphone Ubuntu package..."
 PROJECT=/work BUILD_JOBS="${BUILD_JOBS:-$(nproc)}" bash "$PROJECT/scripts/build-tomphone-deb.sh"
 install -D -m 0644 "$PROJECT/build/tomphone_0.1.0_amd64.deb" "$ROOT/tmp/tomphone_0.1.0_amd64.deb"
+# Add the official upstream WordCraft x86_64 Ubuntu package to the live image.
+# Pin a release and verify the published SHA-256 manifest before installation.
+WORDCRAFT_VERSION="0.11.0"
+WORDCRAFT_DIR="$PROJECT/build/wordcraft-release"
+mkdir -p "$WORDCRAFT_DIR"
+WORDCRAFT_DEB="wordcraft-$WORDCRAFT_VERSION-linux-x86_64.deb"
+WORDCRAFT_RELEASE="https://github.com/storytold/wordcraft/releases/download/v$WORDCRAFT_VERSION"
+curl --fail --location --retry 3 --silent --show-error "$WORDCRAFT_RELEASE/$WORDCRAFT_DEB" -o "$WORDCRAFT_DIR/$WORDCRAFT_DEB" || fail "Could not download WordCraft $WORDCRAFT_VERSION Linux package."
+curl --fail --location --retry 3 --silent --show-error "$WORDCRAFT_RELEASE/SHA256SUMS.txt" -o "$WORDCRAFT_DIR/SHA256SUMS.txt" || fail "Could not download WordCraft checksum manifest."
+EXPECTED_SHA="$(awk -v name="$WORDCRAFT_DEB" '$2 == name || $2 == "*" name {print $1; exit}' "$WORDCRAFT_DIR/SHA256SUMS.txt")"
+[[ "$EXPECTED_SHA" =~ ^[[:xdigit:]]{64}$ ]] || fail "WordCraft checksum was not found in the release manifest."
+printf '%s  %s\n' "$EXPECTED_SHA" "$WORDCRAFT_DIR/$WORDCRAFT_DEB" | sha256sum --check --status || fail "WordCraft release checksum mismatch."
+install -D -m 0644 "$WORDCRAFT_DIR/$WORDCRAFT_DEB" "$ROOT/tmp/$WORDCRAFT_DEB"
 echo "[4/8] Installing desktop packages..."
 printf 'shared shared/default-x-display-manager select sddm\n' | chroot "$ROOT" debconf-set-selections
 if ! chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Retries=3 update; then
@@ -153,6 +166,8 @@ fi
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${PACKAGES[@]}"
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get install -y /tmp/tomphone_0.1.0_amd64.deb
 rm -f "$ROOT/tmp/tomphone_0.1.0_amd64.deb"
+chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get install -y "/tmp/$WORDCRAFT_DEB"
+rm -f "$ROOT/tmp/$WORDCRAFT_DEB"
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get purge -y gdm3 lightdm lightdm-gtk-greeter || true
 KERNEL_PACKAGES="$(chroot "$ROOT" dpkg-query -W -f='${binary:Package} ${Version}\n' 'linux-image-*-generic' 2>/dev/null || true)"
 printf '%s\n' "$KERNEL_PACKAGES"
