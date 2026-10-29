@@ -15,7 +15,7 @@ if [[ ! -f /usr/share/wayland-sessions/hyprland.desktop ]]; then
     echo "Check that the hyprland package is installed." >&2
     exit 1
 fi
-systemctl disable gdm3.service lightdm.service ly.service 2>/dev/null || true
+systemctl disable gdm3.service lightdm.service 2>/dev/null || true
 systemctl set-default graphical.target
 systemctl enable sddm.service
 systemctl daemon-reload
