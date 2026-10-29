@@ -59,7 +59,9 @@ polkitd
 mate-polkit
 sddm
 
-# WordCraft is downloaded as a verified upstream .deb during the build; it is not an Ubuntu archive package.\n\n# Theme and fonts
+# WordCraft is downloaded as a verified upstream .deb during the build; it is not an Ubuntu archive package.
+
+# Theme and fonts
 fonts-jetbrains-mono
 fonts-noto-color-emoji
 papirus-icon-theme
