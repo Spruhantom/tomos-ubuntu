@@ -161,6 +161,13 @@ printf '%s\n' "$KERNEL_PACKAGES" | grep -Eq 'linux-image-7\.3\.[0-9]+-[0-9]+-gen
 echo "[5/8] Applying PunkSway configuration, Zsh/Fastfetch, and Calamares installer..."
 install -D -m 0644 "$PROJECT/config/calamares/settings.conf" "$ROOT/etc/calamares/settings.conf"
 if [[ -d "$PROJECT/config/calamares/modules" ]]; then cp -a "$PROJECT/config/calamares/modules/." "$ROOT/etc/calamares/modules/"; fi
+# Match Calamares' unpackfs source to the squashfs filename found in the base ISO.
+# Ubuntu releases may ship either filesystem.squashfs or minimal.squashfs.
+UNPACKFS_CONFIG="$ROOT/etc/calamares/modules/unpackfs.conf"
+[[ -f "$UNPACKFS_CONFIG" ]] || fail "Calamares unpackfs configuration is missing."
+sed -i -E "s#^([[:space:]]*-[[:space:]]*source:[[:space:]]*)\"/cdrom/casper/(filesystem|minimal)\.squashfs\"#\\1\"/cdrom/casper/$SQUASHFS_NAME\"#" "$UNPACKFS_CONFIG"
+grep -Fq "\"/cdrom/casper/$SQUASHFS_NAME\"" "$UNPACKFS_CONFIG" || fail "Calamares unpackfs source does not match $SQUASHFS_NAME."
+
 install -D -m 0644 "$PROJECT/config/calamares/branding/punk/branding.desc" "$ROOT/usr/share/calamares/branding/punk/branding.desc"
 install -D -m 0644 "$PROJECT/config/calamares/branding/punk/show.html" "$ROOT/usr/share/calamares/branding/punk/show.html"
 install -D -m 0644 "$PROJECT/config/punksway-installer.desktop" "$ROOT/usr/share/applications/punksway-installer.desktop"
