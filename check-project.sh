@@ -101,6 +101,10 @@ if "systemctl --root=\"$ROOT\" set-default graphical.target" not in container_sc
     raise SystemExit("Build script does not set graphical.target as the default")
 if "display-manager.service" not in container_script or "sddm.service" not in container_script:
     raise SystemExit("Build script does not configure and verify SDDM as the display manager")
+if "[Autologin]" not in container_script or "User=ubuntu" not in container_script or "Session=hyprland.desktop" not in container_script:
+    raise SystemExit("Live ISO SDDM autologin is not configured for the Ubuntu user and Hyprland")
+if "10-punksway-live-autologin.conf" not in container_script:
+    raise SystemExit("Live ISO SDDM autologin must use an explicitly live-only configuration file")
 if "systemctl --root=\"$ROOT\" enable sddm.service" not in container_script:
     raise SystemExit("Build script does not enable SDDM in the live filesystem")
 if "fix-display-manager.sh" not in container_script:
