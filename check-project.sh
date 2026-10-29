@@ -34,6 +34,8 @@ required = [
     "config/plymouth/tomos.script",
     "config/calamares/settings.conf",
     "config/calamares/modules/unpackfs.conf",
+    "config/calamares/modules/displaymanager.conf",
+    "config/calamares/modules/services-systemd.conf",
     "config/calamares/branding/punk/branding.desc",
     "config/calamares/branding/punk/show.html",
     "config/punksway-installer.desktop",
@@ -100,6 +102,10 @@ if "display-manager.service" not in container_script or "sddm.service" not in co
     raise SystemExit("Build script does not configure and verify SDDM as the display manager")
 if "fix-display-manager.sh" not in container_script:
     raise SystemExit("Display-manager recovery helper is not installed")
+for rel in ("config/calamares/modules/displaymanager.conf", "config/calamares/modules/services-systemd.conf"):
+    text = (root / rel).read_text()
+    if "  - sddm" not in text or "lightdm" in text:
+        raise SystemExit(f"{rel} must select SDDM and must not reference LightDM")
 print("Display-manager boot configuration checks OK")
 
 for rel in (
