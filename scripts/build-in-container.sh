@@ -145,6 +145,12 @@ done < "$PROJECT/packages.txt"
 echo "[3/8] Building Tomphone Ubuntu package..."
 PROJECT=/work BUILD_JOBS="${BUILD_JOBS:-$(nproc)}" bash "$PROJECT/scripts/build-tomphone-deb.sh"
 install -D -m 0644 "$PROJECT/build/tomphone_0.1.0_amd64.deb" "$ROOT/tmp/tomphone_0.1.0_amd64.deb"
+# Ensure download tools exist even when the build utilities were already installed.
+if ! command -v curl >/dev/null 2>&1; then
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+    apt-get install -y --no-install-recommends curl ca-certificates
+fi
 # Add the official upstream WordCraft x86_64 Ubuntu package to the live image.
 # Pin a release and verify the published SHA-256 manifest before installation.
 WORDCRAFT_VERSION="0.11.0"
