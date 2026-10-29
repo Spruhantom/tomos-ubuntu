@@ -28,6 +28,7 @@ required = [
     "apps/tomphone/share/icons/hicolor/scalable/apps/tomphone.svg",
     "scripts/build-tomphone-deb.sh",
     "scripts/fix-display-manager.sh",
+    "scripts/enable-sddm.sh",
     "scripts/install-tomphone.sh",
     "scripts/build-punksway-iso.sh",
     "config/plymouth/tomos.plymouth",
