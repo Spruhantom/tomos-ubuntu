@@ -117,6 +117,8 @@ services_config = (root / "config/calamares/modules/services-systemd.conf").read
 if "  - sddm" not in services_config:
     raise SystemExit("Calamares will not enable SDDM on the freshly installed system")
 unpackfs = (root / "config/calamares/modules/unpackfs.conf").read_text()
+if "/etc/sddm.conf.d/10-punksway-live-autologin.conf" not in unpackfs:
+    raise SystemExit("Calamares must exclude live-only SDDM autologin from installed systems")
 if "/cdrom/casper/filesystem.squashfs" not in unpackfs:
     raise SystemExit("Calamares unpackfs default source should be the standard filesystem.squashfs name")
 if "UNPACKFS_CONFIG" not in container_script or "SQUASHFS_NAME" not in container_script[container_script.find("Match Calamares"):container_script.find("Match Calamares") + 700]:
