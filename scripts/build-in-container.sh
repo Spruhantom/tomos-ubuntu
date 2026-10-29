@@ -263,6 +263,7 @@ if [[ "$(readlink "$ROOT/etc/systemd/system/default.target" 2>/dev/null || true)
     fail "Default systemd target is not graphical.target."
 fi
 install -D -m 0755 "$PROJECT/scripts/fix-display-manager.sh" "$ROOT/usr/local/sbin/fix-display-manager"
+install -D -m 0755 "$PROJECT/scripts/enable-sddm.sh" "$ROOT/usr/local/sbin/enable-sddm"
 
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get clean
 rm -rf "$ROOT/var/lib/apt/lists"/*
