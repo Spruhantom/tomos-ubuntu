@@ -91,6 +91,10 @@ if 'GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"' not in container_script:
     raise SystemExit("Installed system GRUB configuration does not enable the custom Plymouth splash")
 if "update-initramfs -u -k all" not in container_script:
     raise SystemExit("Build script does not regenerate initramfs after selecting Plymouth theme")
+if 'chroot "$ROOT" readlink -f /usr/share/plymouth/themes/default.plymouth' not in container_script:
+    raise SystemExit("Plymouth default-theme verification must resolve symlinks inside the image root")
+if '^[[:space:]]*(linux|linuxefi)[[:space:]]' not in container_script or 'quiet.*splash' not in container_script:
+    raise SystemExit("Live GRUB entries are not checked for quiet splash boot parameters")
 print(f"package and build requirements OK: {len(packages)} packages")
 
 package_builder = (root / "scripts/build-in-container.sh").read_text()
