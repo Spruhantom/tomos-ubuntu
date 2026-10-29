@@ -43,7 +43,7 @@ These SVG renders illustrate the intended PunkSway blue-neon desktop design. The
 - Hyprland/Wayland as the only supported window manager session.
 - A custom neon-blue Caelestia Shell configuration with translucent panels, rounded surfaces, five workspaces, and dynamic colours driven by the Tom OS wallpaper. Caelestia itself is not automatically built into the ISO because its Quickshell/Qt dependency versions need validation on Ubuntu 26.10; Waybar and Wofi remain as a fallback.
 - Tom OS-inspired purple/neon desktop based on the supplied reference: scenic neon wallpaper, slim top panel, five workspaces, translucent floating bottom app dock, rounded dark windows and coordinated colours.
-- Ly TTY display/login manager; choose the Hyprland session at login. Hyprland is the sole supported window manager.
+- SDDM graphical display/login manager with the Hyprland Wayland session. Hyprland is the sole supported window manager.
 - A custom-branded Calamares installer configuration and launch icon, plus partitioning tools. The installer configuration is experimental until tested in a VM on both UEFI and BIOS systems.
 - Zsh as the default shell, with a custom violet/cyan prompt and a Tom OS ASCII logo shown by Fastfetch on interactive terminals.
 - NetworkManager tray applet, PipeWire tools, screenshots, clipboard tools, idle locking and a quick-start guide.
