@@ -113,6 +113,10 @@ if "display-manager.service" not in container_script or "sddm.service" not in co
     raise SystemExit("Build script does not configure and verify SDDM as the display manager")
 if "[Autologin]" not in container_script or "User=ubuntu" not in container_script or "Session=hyprland.desktop" not in container_script:
     raise SystemExit("Live ISO SDDM autologin is not configured for the Ubuntu user and Hyprland")
+if 'useradd --create-home --shell /usr/bin/zsh ubuntu' not in container_script or 'getent passwd ubuntu' not in container_script:
+    raise SystemExit("Build script must create and verify the Ubuntu live account when the base image lacks it")
+if 'ubuntu ALL=(ALL:ALL) NOPASSWD:ALL' not in container_script or 'visudo -cf /etc/sudoers.d/ubuntu' not in container_script:
+    raise SystemExit("Live Ubuntu account must have validated passwordless sudo for installer administration")
 if "10-punksway-live-autologin.conf" not in container_script:
     raise SystemExit("Live ISO SDDM autologin must use an explicitly live-only configuration file")
 if "systemctl --root=\"$ROOT\" enable sddm.service" not in container_script:
