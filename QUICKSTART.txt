@@ -37,7 +37,7 @@ Zsh is the default shell. Interactive terminals show the custom Tom OS Fastfetch
 
 DISPLAY MANAGER RECOVERY\n-------------------------\nIf the system boots to a text console instead of the graphical login, log in and run:\n  sudo /usr/local/sbin/fix-display-manager\nThen reboot. The build sets graphical.target and enables SDDM, but the final image still needs a VM boot test.\n\nLIVE SESSION VS INSTALLED SYSTEM
 --------------------------------
-Ly is the configured display/login manager and presents a TTY-based session selector. Choose the Hyprland session. Automatic live-session login has been disabled because the previous LightDM-specific autologin hook does not apply to Ly. User defaults are copied from
+SDDM is the configured graphical display/login manager and starts the Hyprland Wayland session. The live image uses the configured SDDM autologin. User defaults are copied from
 /etc/skel during account creation.
 
 INSTALLING
