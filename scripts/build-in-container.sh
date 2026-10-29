@@ -270,7 +270,8 @@ SDDM
 # Live autologin only works if the Ubuntu live user exists in the filesystem.
 grep -q '^ubuntu:' "$ROOT/etc/passwd" || fail "Ubuntu live user is missing; SDDM autologin cannot work."
 # Confirm the configured session points to an installed session desktop file.
-grep -Rqs '^Exec=.*hyprland\|^Exec=.*Hyprland' "$ROOT/usr/share/wayland-sessions/hyprland.desktop" || true
+SESSION_FILE="$ROOT/usr/share/wayland-sessions/hyprland.desktop"
+grep -Eq '^Exec=.*([Hh]yprland)' "$SESSION_FILE" || fail "Hyprland session desktop entry has no valid Exec command."
 systemctl --root="$ROOT" enable sddm.service
 # Fail the image build if systemd did not create the display-manager alias.
 [[ -L "$ROOT/etc/systemd/system/display-manager.service" ]] || fail "SDDM did not create display-manager.service; graphical login would not start."
