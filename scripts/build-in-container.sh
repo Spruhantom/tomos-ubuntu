@@ -205,9 +205,21 @@ Theme=tomos
 ShowDelay=0
 DeviceTimeout=8
 PLYMOUTH
-# Regenerate initramfs so the selected theme is included in the boot image.
+# Make the Tom OS theme the explicit Plymouth default for both live and installed systems.
 chroot "$ROOT" update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/tomos/tomos.plymouth 100
 chroot "$ROOT" update-alternatives --set default.plymouth /usr/share/plymouth/themes/tomos/tomos.plymouth
+DEFAULT_PLYMOUTH="$(readlink "$ROOT/usr/share/plymouth/themes/default.plymouth" 2>/dev/null || true)"
+[[ "$DEFAULT_PLYMOUTH" == *"/plymouth/themes/tomos/tomos.plymouth" ]] || fail "Tom OS Plymouth theme is not the selected system default."
+# Keep the splash enabled in the installed system's generated GRUB configuration too.
+if [[ -f "$ROOT/etc/default/grub" ]]; then
+    if grep -q '^GRUB_CMDLINE_LINUX_DEFAULT=' "$ROOT/etc/default/grub"; then
+        sed -i -E 's|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"|' "$ROOT/etc/default/grub"
+    else
+        printf '\nGRUB_CMDLINE_LINUX_DEFAULT="quiet splash"\n' >> "$ROOT/etc/default/grub"
+    fi
+fi
+# Rebuild every initramfs after selecting the custom theme so the Ubuntu splash
+# assets are not retained as the active Plymouth theme in the live boot image.
 chroot "$ROOT" update-initramfs -u -k all
 # The ISO boots from files in /casper, so keep them in sync with the kernel
 # and initramfs installed in the compressed live filesystem.
