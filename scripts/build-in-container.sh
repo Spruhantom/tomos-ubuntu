@@ -208,7 +208,7 @@ PLYMOUTH
 # Make the Tom OS theme the explicit Plymouth default for both live and installed systems.
 chroot "$ROOT" update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/tomos/tomos.plymouth 100
 chroot "$ROOT" update-alternatives --set default.plymouth /usr/share/plymouth/themes/tomos/tomos.plymouth
-DEFAULT_PLYMOUTH="$(readlink -f "$ROOT/usr/share/plymouth/themes/default.plymouth" 2>/dev/null || true)"
+DEFAULT_PLYMOUTH="$(chroot "$ROOT" readlink -f /usr/share/plymouth/themes/default.plymouth 2>/dev/null || true)"
 [[ "$DEFAULT_PLYMOUTH" == *"/plymouth/themes/tomos/tomos.plymouth" ]] || fail "Tom OS Plymouth theme is not the selected system default."
 # Keep the splash enabled in the installed system's generated GRUB configuration too.
 if [[ -f "$ROOT/etc/default/grub" ]]; then
