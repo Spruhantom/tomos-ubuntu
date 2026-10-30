@@ -18,6 +18,7 @@ cleanup_mounts() {
     for target in "$ROOT/run" "$ROOT/sys" "$ROOT/proc" "$ROOT/dev"; do
         if mountpoint -q "$target"; then umount -R "$target" 2>/dev/null || true; fi
     done
+    if mountpoint -q "$ROOT"; then umount "$ROOT" 2>/dev/null || true; fi
 }
 restore_chroot_files() {
     set +e
@@ -35,7 +36,7 @@ restore_chroot_files() {
         rm -f "$ROOT/etc/resolv.conf"
     fi
 }
-cleanup_all() { cleanup_mounts; restore_chroot_files; }
+cleanup_all() { restore_chroot_files; cleanup_mounts; }
 trap cleanup_all EXIT
 
 [[ -f "$BASE_ISO" ]] || fail "Base ISO not found: $BASE_ISO"
@@ -74,17 +75,54 @@ else
 fi
 ORIGINAL_SQ="$TREE/casper/$SQUASHFS_NAME"
 [[ -f "$TREE/.disk/info" ]] || fail "No .disk/info found."
+
+# Ubuntu Desktop uses a layered Casper root. Build a writable overlay above the
+# complete layer chain and add our changes as a new leaf layer; replacing the
+# shared minimal.squashfs base leaves the selected live root inconsistent.
+LIVE_LAYERFS_PATH="$(grep -hE '^[[:space:]]*(linux|linuxefi)[[:space:]]' "$TREE/boot/grub/grub.cfg" "$TREE/boot/grub/loopback.cfg" 2>/dev/null | grep -oE 'layerfs-path=[^[:space:]]+' | head -n 1 | cut -d= -f2 || true)"
+[[ -n "$LIVE_LAYERFS_PATH" ]] || fail "Ubuntu Desktop boot entries do not specify a Casper layerfs-path."
+LIVE_LAYER_FILE="${LIVE_LAYERFS_PATH##*/}"
+[[ "$LIVE_LAYER_FILE" == *.squashfs ]] || fail "Unsupported Casper layerfs path: $LIVE_LAYERFS_PATH"
+LIVE_LAYER_BASE="${LIVE_LAYER_FILE%.squashfs}"
+IFS='.' read -r -a LAYER_PARTS <<< "$LIVE_LAYER_BASE"
+LAYER_NAMES=()
+LAYER_NAME=""
+for layer_part in "${LAYER_PARTS[@]}"; do
+    LAYER_NAME="${LAYER_NAME:+$LAYER_NAME.}$layer_part"
+    [[ -s "$TREE/casper/$LAYER_NAME.squashfs" ]] || fail "Casper layer is missing: $TREE/casper/$LAYER_NAME.squashfs"
+    LAYER_NAMES+=("$LAYER_NAME")
+done
+[[ "${LAYER_NAMES[0]}.squashfs" == "$SQUASHFS_NAME" ]] || fail "Selected Casper layer chain does not begin with $SQUASHFS_NAME."
+CUSTOM_LAYER_NAME="$LIVE_LAYER_BASE.custom"
+CUSTOM_LAYER_FILE="$CUSTOM_LAYER_NAME.squashfs"
+CUSTOM_LAYER_SQ="$TREE/casper/$CUSTOM_LAYER_FILE"
 SOURCE_INFO="$(cat "$TREE/.disk/info")"
 printf 'Source image: %s\n' "$SOURCE_INFO"
 printf '%s' "$SOURCE_INFO" | grep -q '26\.10' || fail "Expected Ubuntu 26.10."
 printf '%s' "$SOURCE_INFO" | grep -qi 'amd64' || fail "Expected Ubuntu Desktop amd64."
 
-echo "[2/8] Unpacking the live filesystem..."
+echo "[2/8] Mounting the layered live filesystem..."
 BUILD_JOBS="${BUILD_JOBS:-$(nproc)}"
 [[ "$BUILD_JOBS" =~ ^[0-9]+$ ]] && (( BUILD_JOBS > 0 )) || BUILD_JOBS="$(nproc)"
 (( BUILD_JOBS > 8 )) && BUILD_JOBS=8
-unsquashfs -processors "$BUILD_JOBS" -d "$ROOT" "$ORIGINAL_SQ"
-grep -qE '^VERSION_ID="?26\.10"?$' "$ROOT/usr/lib/os-release" || fail "Live filesystem is not Ubuntu 26.10."
+LAYER_DIRS=()
+mkdir -p "$WORK/layers"
+for layer_name in "${LAYER_NAMES[@]}"; do
+    layer_dir="$WORK/layers/$layer_name"
+    unsquashfs -processors "$BUILD_JOBS" -d "$layer_dir" "$TREE/casper/$layer_name.squashfs"
+    LAYER_DIRS+=("$layer_dir")
+done
+# OverlayFS treats the first lowerdir as the highest-priority lower layer.
+LOWERDIRS=()
+for ((layer_index=${#LAYER_DIRS[@]} - 1; layer_index >= 0; layer_index--)); do
+    LOWERDIRS+=("${LAYER_DIRS[layer_index]}")
+done
+LOWERDIR_PATH="$(IFS=:; printf '%s' "${LOWERDIRS[*]}")"
+ROOT_UPPER="$WORK/rootfs-upper"
+ROOT_WORK="$WORK/rootfs-work"
+mkdir -p "$ROOT" "$ROOT_UPPER" "$ROOT_WORK"
+mount -t overlay overlay -o "lowerdir=$LOWERDIR_PATH,upperdir=$ROOT_UPPER,workdir=$ROOT_WORK" "$ROOT"
+grep -qE '^VERSION_ID="?26\.10"?$' "$ROOT/usr/lib/os-release" || fail "Layered live filesystem is not Ubuntu 26.10."
 
 if [[ -L "$ROOT/etc/resolv.conf" ]]; then
     RESOLV_KIND=link; RESOLV_TARGET="$(readlink "$ROOT/etc/resolv.conf")"
@@ -220,6 +258,10 @@ if [[ -f "$ROOT/etc/default/grub" ]]; then
 fi
 # Rebuild every initramfs after selecting the custom theme so the Ubuntu splash
 # assets are not retained as the active Plymouth theme in the live boot image.
+# Point the generated initramfs at the custom leaf layer as well as the GRUB
+# kernel command line.
+mkdir -p "$ROOT/etc/initramfs-tools/conf.d"
+printf 'LAYERFS_PATH=%s\n' "$CUSTOM_LAYER_FILE" > "$ROOT/etc/initramfs-tools/conf.d/default-layer.conf"
 chroot "$ROOT" update-initramfs -u -k all
 # The ISO boots from files in /casper, so keep them in sync with the kernel
 # and initramfs installed in the compressed live filesystem.
@@ -322,7 +364,8 @@ install -D -m 0755 "$PROJECT/scripts/enable-sddm.sh" "$ROOT/usr/local/sbin/enabl
 
 chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get clean
 rm -rf "$ROOT/var/lib/apt/lists"/*
-cleanup_mounts; restore_chroot_files; RESOLV_KIND=missing; POLICY_WAS_PRESENT=0; POLICY_BACKUP=""
+du -sx --block-size=1 "$ROOT" | awk '{print $1}' > "$TREE/casper/$CUSTOM_LAYER_NAME.size"
+restore_chroot_files; cleanup_mounts; RESOLV_KIND=missing; POLICY_WAS_PRESENT=0; POLICY_BACKUP=""
 for cfg in "$TREE/boot/grub/grub.cfg" "$TREE/boot/grub/loopback.cfg"; do
     if [[ -f "$cfg" ]]; then
         sed -i -e 's/Try or Install Ubuntu/Try or Install PunkSway/g' -e 's/Install Ubuntu/Install PunkSway/g' -e 's/Ubuntu 26\.10 LTS/PunkSway 26.10/g' "$cfg"
@@ -335,6 +378,8 @@ for cfg in "$TREE/boot/grub/grub.cfg" "$TREE/boot/grub/loopback.cfg"; do
             /splash/! s/$/ splash/
         }' "$cfg"
         grep -Eq '^[[:space:]]*(linux|linuxefi)[[:space:]].*quiet.*splash|^[[:space:]]*(linux|linuxefi)[[:space:]].*splash.*quiet' "$cfg" || fail "Could not enable quiet splash on live GRUB entries in $cfg."
+        grep -q 'layerfs-path=' "$cfg" || fail "No Casper layerfs-path found in $cfg."
+        sed -i -E "s|layerfs-path=[^[:space:]]+|layerfs-path=$CUSTOM_LAYER_FILE|g" "$cfg"
     fi
 done
 printf '%s\n' 'PunkSway 26.10 amd64 — Ubuntu-based Blue Neon Hyprland remix' > "$TREE/.disk/info"
@@ -344,16 +389,17 @@ SQ_COMP="$(printf '%s\n' "$SQ_INFO" | awk '$1 == "Compression" { print $2; exit 
 SQ_BLOCK="$(printf '%s\n' "$SQ_INFO" | awk '$1 == "Block" && $2 == "size" { print $3; exit }')"
 case "$SQ_COMP" in gzip|lzo|lz4|xz|zstd|lzma) ;; *) SQ_COMP=xz ;; esac
 [[ "$SQ_BLOCK" =~ ^[0-9]+$ ]] || SQ_BLOCK=1048576
-rm -f "$ORIGINAL_SQ"
-mksquashfs "$ROOT" "$ORIGINAL_SQ" -comp "$SQ_COMP" -b "$SQ_BLOCK" -noappend -processors "$BUILD_JOBS"
-du -sx --block-size=1 "$ROOT" | awk '{print $1}' > "$TREE/casper/filesystem.size"
+rm -f "$CUSTOM_LAYER_SQ"
+mksquashfs "$ROOT_UPPER" "$CUSTOM_LAYER_SQ" -comp "$SQ_COMP" -b "$SQ_BLOCK" -noappend -processors "$BUILD_JOBS"
 (cd "$TREE"; find . -type f ! -name md5sum.txt -print0 | sort -z | xargs -0 -r md5sum > md5sum.txt)
 rm -rf "$ROOT"
 echo "[7/8] Rebuilding bootable ISO..."
 rm -f "$OUTPUT"
 XORRISO_ARGS=(-indev "$BASE_ISO" -outdev "$OUTPUT" -boot_image any replay
-    -map "$ORIGINAL_SQ" "/casper/$SQUASHFS_NAME"
-    -map "$TREE/casper/filesystem.size" /casper/filesystem.size
+    -map "$CUSTOM_LAYER_SQ" "/casper/$CUSTOM_LAYER_FILE"
+    -map "$TREE/casper/$CUSTOM_LAYER_NAME.size" "/casper/$CUSTOM_LAYER_NAME.size"
+    -map "$TREE/casper/vmlinuz" /casper/vmlinuz
+    -map "$TREE/casper/initrd" /casper/initrd
     -map "$TREE/md5sum.txt" /md5sum.txt
     -map "$TREE/.disk/info" /.disk/info
     -map "$TREE/boot/grub/grub.cfg" /boot/grub/grub.cfg)
