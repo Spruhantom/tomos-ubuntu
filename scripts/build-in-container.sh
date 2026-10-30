@@ -13,14 +13,14 @@ LOG="$PROJECT/build/build.log"
 mkdir -p "$PROJECT/build" "$PROJECT/dist"
 exec > >(tee -a "$LOG") 2>&1
 fail() { echo "ERROR: $*" >&2; exit 1; }
-cleanup_mounts() {
+cleanup_mounts() (
     set +e
     for target in "$ROOT/run" "$ROOT/sys" "$ROOT/proc" "$ROOT/dev"; do
         if mountpoint -q "$target"; then umount -R "$target" 2>/dev/null || true; fi
     done
     if mountpoint -q "$ROOT"; then umount "$ROOT" 2>/dev/null || true; fi
-}
-restore_chroot_files() {
+)
+restore_chroot_files() (
     set +e
     if [[ -n "${POLICY_BACKUP:-}" && -e "$POLICY_BACKUP" ]]; then
         cp -a "$POLICY_BACKUP" "$ROOT/usr/sbin/policy-rc.d"
@@ -35,7 +35,7 @@ restore_chroot_files() {
     elif [[ "${RESOLV_KIND:-}" == missing ]]; then
         rm -f "$ROOT/etc/resolv.conf"
     fi
-}
+)
 cleanup_all() { restore_chroot_files; cleanup_mounts; }
 trap cleanup_all EXIT
 
